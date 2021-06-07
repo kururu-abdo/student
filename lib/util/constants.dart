@@ -1,3 +1,4 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_storage/get_storage.dart';
 
 const List<Map>  users=
@@ -230,6 +231,8 @@ const Map  enroll=
 
 
 GetStorage  getStorage = new GetStorage();
+const String serverToken =
+    'AAAAmLQY4zc:APA91bHOu6VSlURNXye9jO1HHEadpwT6Vjv6PZDjhf9dqC-vxDh184KEVRhUWDlgjqUSEv_8G6ic8huYuCew97ZoDAhY2YqOEEarZtvS7AYRp9pFWu2Z-fOJt6Flfuy1L92GBXxKsl6m';
 
 
 const String USER_ID ='user_id';
@@ -239,3 +242,12 @@ const String ISLOGGEDIN= 'isloggedin';
 const String PHONE ='phone';
 
 const String PASSWORD = 'password';
+
+
+
+// const AndroidNotificationChannel channel = AndroidNotificationChannel(
+//   'high_importance_channel', // id
+//   'High Importance Notifications', // title
+//   'This channel is used for important notifications.', // description
+//   importance: Importance.max,
+// );

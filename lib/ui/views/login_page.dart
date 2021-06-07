@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:student_side/ui/views/home/home_screen.dart';
 
 import 'package:student_side/util/constants.dart';
+import 'package:student_side/util/ui/app_colors.dart';
 
 
 class Login extends StatelessWidget {
@@ -15,8 +16,8 @@ TextEditingController passwordController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      // resizeToAvoidBottomInset: false,
-      // resizeToAvoidBottomPadding: false,
+     
+      
         appBar: AppBar(title: Text('Login'),  centerTitle: true,),
         body: Padding(
           padding: const EdgeInsets.all(10.0),

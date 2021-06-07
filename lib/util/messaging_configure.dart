@@ -1,6 +1,6 @@
     import 'package:firebase_messaging/firebase_messaging.dart';
 
-final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
 
 // _firebaseMessaging.configure(
 //       onMessage: (Map<String, dynamic> message) async {

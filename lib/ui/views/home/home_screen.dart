@@ -1,421 +1,778 @@
-
 import 'dart:convert';
+import 'dart:io';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+import 'package:page_transition/page_transition.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:load/load.dart';
+import 'package:student_side/app/animated_container.dart';
+import 'package:student_side/app/user_provider.dart';
+import 'package:student_side/model/day.dart';
 import 'package:student_side/model/department.dart';
 import 'package:student_side/model/level.dart';
+import 'package:student_side/model/semester.dart';
 import 'package:student_side/model/student.dart';
+import 'package:student_side/ui/views/events.dart';
+import 'package:student_side/ui/views/home/consults/consults.dart';
 import 'package:student_side/ui/views/home/consults/new_consult.dart';
+import 'package:student_side/ui/views/home/main_drawer.dart';
+import 'package:student_side/ui/views/home/subjects/subject_list.dart';
+import 'package:student_side/ui/views/home/subjects/subject_widget.dart';
 import 'package:student_side/ui/views/logout/logout_view.dart';
+import 'package:student_side/ui/views/teachers.dart';
+import 'package:student_side/ui/views/website.dart';
 import 'package:student_side/ui/views/welcome_screen.dart';
+import 'package:student_side/ui/views/widgets/about_college.dart';
 import 'package:student_side/util/constants.dart';
-import 'package:cloud_firestore/cloud_firestore.dart' as firebase_storage;
+import 'package:student_side/util/fcm_init.dart';
+import 'package:student_side/ui/views/courses_page.dart';
+import 'package:student_side/util/local_notifications.dart';
+import 'package:student_side/util/ui/app_colors.dart';
+import 'package:tinycolor/tinycolor.dart';
+
 import '../courses_page.dart';
 import '../profile_page.dart';
 
-
-
-
-
-class HomeView extends StatefulWidget{
-
+class HomeView extends StatefulWidget {
   final String user_id;
 
-  const HomeView({Key key, this.user_id}) : super(key: key);
+  const HomeView({this.user_id});
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
-return  _State();  }
-
-
-
+    return _State();
+  }
 }
 
-class _State extends State<HomeView>{
-
-    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
+class _State extends State<HomeView> {
+   final GlobalKey<ScaffoldState> _scflKey = new GlobalKey<ScaffoldState>(); 
   String image;
-String name;
-String email;
-Department dept;
-Level level;
-@override
+  String name;
+  String email;
+  Department dept;
+  Level level;
+  @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-  fetchStudnet();
+        _pageController = PageController();
 
- //subscribe();
-  print(getStorage.read('student'));
+    fetchStudnet();
+//fetch_semesters();
 
-  print(getStorage.read('student').runtimeType);
-  regUser();
-  getToken();
+    print(getStorage.read('student'));
+
+    print(getStorage.read('student').runtimeType);
+
+    FCMConfig.fcmConfig();
+    subscribe();
+
+    fetch_semesters();
+    fetch_subjects();
+    getDaysOfWeek().then((value){
+setState(() {
+  selectedDay=days[0];
+});
+
+    });
+
+    // debugPrint(selectedDay.name);
   }
-  regUser() async{
-try {
-  UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-    email: "barry.allen@example.com",
-    password: "SuperSecretPassword!"
-  );
-} on FirebaseAuthException catch (e) {
-  if (e.code == 'weak-password') {
-    print('The password provided is too weak.');
-  } else if (e.code == 'email-already-in-use') {
-    print('The account already exists for that email.');
+
+  List subjects = [];
+  fetch_subjects() async {
+    var future = await showLoadingDialog();
+
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    var level = firestore
+        .collection('subject')
+        .where('level', isEqualTo: this.level.toJson());
+
+    var fetchedSemester = await level.get();
+
+    Iterable I = fetchedSemester.docs;
+    print(
+        'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd');
+    setState(() {
+      subjects = I;
+      // semsters =   I.map((e) => Semester.fromJson(e.data()) ).toList();
+    });
+
+    future.dismiss();
   }
-} catch (e) {
-  print(e);
+
+  subscribe() {
+    var data = getStorage.read('student');
+    var student = Student.fromJson(json.decode(data));
+
+    FCMConfig.subscripeToTopic(
+        "${student.department.dept_code}${student.level.id}");
+    FCMConfig.subscripeToTopic("level${student.level.id.toString()}");
+    FCMConfig.subscripeToTopic("${student.department.dept_code}");
+
+    FCMConfig.subscripeToTopic("${student.id_number.toString()}");
+    FCMConfig.subscripeToTopic("general");
+  }
+
+  List<Semester> semsters = [];
+  Semester semester;
+  Day selectedDay;
+  int _currentIndex = 0;
+  PageController _pageController;
+  fetch_semesters() async {
+    var future = await showLoadingDialog();
+
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    var level = firestore.collection('semester');
+
+    var fetchedSemester = await level.get();
+
+    Iterable I = fetchedSemester.docs;
+    print(
+        'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd');
+    setState(() {
+      semsters = I.map((e) => Semester.fromJson(e.data())).toList();
+    });
+
+    future.dismiss();
+  }
+
+  fetchStudnet() async {
+    var data = getStorage.read('student');
+    var student = Student.fromJson(json.decode(data));
+// var user_image =   await   downloadURLExample(student.profile_image)??''  ;
+    setState(() {
+      // image= user_image;
+      name = student.name;
+
+      this.dept = Department.fromJson(student.department.toJson());
+      this.level = Level.fromJson(student.level.toJson());
+    });
+  }
+
+  List<Day> days=[];
+String getformattedToday(){
+  DateTime now = DateTime.now();
+    String formattedDate = DateFormat('MMM-dd – kk:mm' ).format(now);
+
+
+return formattedDate;
 }
-  }
-  getToken() async{
-    final user = await FirebaseAuth.instance.currentUser;
-  final idToken = await user.getIdToken();
-  print(idToken);
-  }
-  subscribe(){
-_firebaseMessaging.subscribeToTopic("${this.level.id}");
-
-  }
-
-
-
-
-fetchStudnet() async {
-var data =  getStorage.read('student');
-var student=  Student.fromJson( json.decode(data) );
-var user_image =   await   downloadURLExample(student.profile_image)??''  ;
- setState(()  {
-    
-    
-    image= user_image;
-    name =student.name;
-    
-    email= student.email;
-    dept = Department.fromJson(student.department.toJson());
-    level= Level.fromJson(student.level.toJson());
-  });
-  // var user =users.firstWhere((element) => element['user_id']=='dkjkfkdjf100998');
-  // setState(() {
-    
-
-  //   image=user['profile'];
-  //   name =user['user_name'];
-  //   email= user ['email'];
-  // });
+bool isToday(int index){
+  var now = DateTime.now().weekday;
+  return index==now;
 }
+
+getDaysOfWeek() async {
+      var future = await showLoadingDialog();
+ FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    var days = firestore.collection('days');
+
+    var fetchedDays = await days.get();
+
+    Iterable I = fetchedDays.docs;
+    print(
+        'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd');
+    setState(() {
+      this.days = I.map((e) => Day.fromJson(e.data())).toList();
+    });
+
+    future.dismiss();
+}
+
+String getDateOfTheDay(int day) {
+    var monday = 1;
+    var now = new DateTime.now();
+
+    while (now.weekday != monday) {
+      now = now.subtract(new Duration(days: 1));
+    }
+    var dayOfWeek = day;
+    DateTime date = DateTime.now();
+    var lastMonday = date.subtract(Duration(days: date.weekday - dayOfWeek));
+// .toIso8601String();
+    final DateFormat formatter = DateFormat('M/dd');
+    final formattedDate = formatter.format(lastMonday);
+        return formattedDate;
+  }
   @override
   Widget build(BuildContext context) {
-    
+    var animProvider = Provider.of<AnimContainer>(context);
+    var studentProvider = Provider.of<UserProvider>(context);
+    var rotate = Provider.of<AnimContainer>(context).rotateY;
 
-    return Scaffold(appBar: AppBar(
+    return Scaffold(
+      key: _scflKey,
+        backgroundColor: Color.fromARGB(255, 254, 255, 255),
+        drawer :MainDrawer(),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(
+            children: [
+              SizedBox(
+                height: 10.0,
+              ),
+              Container(
+                height: 30.0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset(
+                      "assets/images/karari.png",
+                      height: 30,
+                    ),
+                    Row(
 
-    centerTitle: true,
-    title:Text('Students App' ,   style: TextStyle(fontWeight: FontWeight.bold ,fontSize: 30),))
-    ,
-    drawer: Drawer(
+                      children: [
 
+                        IconButton(
+                            icon: Icon(Icons.notifications), onPressed: () {}),
 
- child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
+                            
+                        IconButton(
+                            icon: Icon(Icons.menu_outlined), onPressed: () {
+ _scflKey.currentState.openDrawer(); 
 
-DrawerHeader(
-  
-    child: Column(
-children: [
-GestureDetector(
-  onTap: (){
-    Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage()));
+                            }),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
 
-  },
-  child:   Container(
-  
-    width:120,
-  
-    height:120,
-  
-    decoration: BoxDecoration(
-  
-      shape:BoxShape.circle
-  
-    ),
-  
-    child:   Hero(
-  
-    
-  
-      tag: 'image',
-  
-    
-  
-      child: Image.network(image??'data:image/jpeg;base64,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'),
-  
-    
-  
-    ),
-  
-  ),
-) ,
+Center(child: Text('مرحبا  ,   عابدة' ,   style: TextStyle(fontWeight: FontWeight.bold , fontSize: 15),)) ,
+ SizedBox(
+                height: 10.0,
+              ),
 
-
-Text(name ?? '')
-
-],
-
-    ),
-    
-         ),
-
-         ListTile(
-    title: Row(
-      children: <Widget>[
-        Icon(Icons.home),
-        Padding(
-          padding: EdgeInsets.only(left: 8.0),
-          child: Text('My subjects'),
-        )
-      ],
-    ),
-    onTap: (){
-Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Material(child: CourseDetail())));
-    },
-  ) ,
-
-  
-         ListTile(
-    title: Row(
-      children: <Widget>[
-        Icon(Icons.calendar_view_day_sharp),
-        Padding(
-          padding: EdgeInsets.only(left: 8.0),
-          child: Text('Events'),
-        )
-      ],
-    ),
-    onTap: (){
-
-    },
-  ) ,
-
-         ListTile(
-    title: Row(
-      children: <Widget>[
-        Icon(Icons.star),
-        Padding(
-          padding: EdgeInsets.only(left: 8.0),
-          child: Text('Featured'),
-        )
-      ],
-    ),
-    onTap: (){
-
-    },
-  ) ,
-
-         ListTile(
-    title: Row(
-      children: <Widget>[
-        Icon(Icons.play_arrow),
-        Padding(
-          padding: EdgeInsets.only(left: 8.0),
-          child: Text('notifications'),
-        )
-      ],
-    ),
-    onTap: (){
-
-    },
-  ) ,
+              Text(
+                'الجدول',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [Text(getformattedToday()), Icon(Icons.calendar_today_outlined)],
+              ),
+              SizedBox(
+                height: 5.0,
+              ),
+              Container(
+                height: 1,
+                width: double.infinity,
+                color: Colors.grey,
+              ),
+              SizedBox(
+                height: 30.0,
+              ),
+              Container(
+                height: 100,
+                width: double.infinity,
+                child: ListView.builder(
+                  itemCount: days.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (BuildContext context, int index) {
+                 
 
 
- 
+                    if (isToday(days[index].id)) {
+                      selectedDay=days[index];
+                    }
+
+                    
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(days[index].name),
+                            Container(
+                              height: 20,
+                              width: 30,
+                              decoration: BoxDecoration(
+                                  color:
+                                   isToday (days[index].id) ? Colors.black : Colors.white,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              child: Text(
+                               getDateOfTheDay(days[index].id),
+                                style: TextStyle(
+                                    color:      isToday(days[index].id)
+                                        ? Colors.white
+                                        : Colors.black),
+                              ),
+                            ),
+                            Icon(Icons.more_horiz)
+                          ]),
+                    );
+                  },
+                ),
+              ),
+              Visibility(visible: false, child: Container()),
+              SizedBox(
+                height: 20.0,
+              ),
+              Container(
+                height: 30.0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('المواد',
+                        style: TextStyle(
+                            fontSize: 20.0, fontWeight: FontWeight.bold)),
+                    InkWell(
+                      onTap: () {
+
+Navigator.of(context).push(
+ PageTransition(
+                          type: PageTransitionType.fade, child: Subjects(
+                            student: studentProvider.getUser(),
+                          ))
+
+
+);
 
 
 
-         ListTile(
-    title: Row(
-      children: <Widget>[
-        Icon(Icons.build),
-        Padding(
-          padding: EdgeInsets.only(left: 8.0),
-          child: Text('About college'),
-        )
-      ],
-    ),
-    onTap: (){
+                      },
+                      child: Text('رؤية كل المواد',
+                          style: TextStyle(
+                              color: TinyColor.fromString("blue").color,
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height/2,
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10 ,
+                  children: 
+                  
+                  
+                  [
+                    Container(
+                      height: 120,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO( 255, 224, 226 ,1.0) ,
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                      
+                      child: Column(
+                   
+                        children: [
+     Align(
+       alignment: Alignment.centerRight,
+       child: Text('إسم المادة' , style: TextStyle(fontWeight: FontWeight.bold))), 
 
-    },
-  ) ,
-      ListTile(
-    title: Row(
-      children: <Widget>[
-        Icon(Icons.build),
-        Padding(
-          padding: EdgeInsets.only(left: 8.0),
-          child: Text('استفسار'),
-        )
-      ],
-    ),
-    onTap: (){
-Navigator.of(context).push(MaterialPageRoute(builder:(_)=>NewConsult()));
-    },
-  ) ,
+  Align(
+       alignment: Alignment.centerRight ,child: Text('13 محاضرة')) ,
+  Align(
+       alignment: Alignment.bottomCenter,child: Image.asset('assets/images/diary.png'  , width: 50, height: 60)),
 
+                      ],),
+                    ) ,
 
-         ListTile(
-    title: Row(
-      children: <Widget>[
-        Icon(Icons.build),
-        Padding(
-          padding: EdgeInsets.only(left: 8.0),
-          child: Text('logout'),
+                     Container(
+                      height: 120,
+                      width: 80,
+                    decoration: BoxDecoration(
+                        color: Color.fromRGBO(245, 244, 239, 1.0),
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Column(
+                   
+                        children: [
+     Align(
+       alignment: Alignment.centerRight,
+       child: Text('إسم المادة' , style: TextStyle(fontWeight: FontWeight.bold))), 
 
-        )
-      ],
-    ),
-    onTap: ()  async{
-      getStorage.write('islogged', false);
+  Align(
+       alignment: Alignment.centerRight ,child: Text('13 محاضرة')) ,
+  Align(
+       alignment: Alignment.bottomCenter,child: Image.asset('assets/images/diary.png'  , width: 50, height: 60)),
 
-getStorage?.remove('islogged');
+                      ],),
+                    ) ,
 
- Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen()),
-     (Route<dynamic> route) => false
-    );      
+                     Container(
+                      height: 120,
+                      width: 80,
+                     decoration: BoxDecoration(
+                        color: Color.fromRGBO(223, 226, 254, 1.0),
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Column(
+                      children: [
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: Text('إسم المادة',
+                                style: TextStyle(fontWeight: FontWeight.bold))),
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: Text('13 محاضرة')),
+                        Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Image.asset('assets/images/diary.png',
+                                width: 50, height: 60)),
+                      ],
+                    ),
+                    ) ,
+                    Container(
+                      height: 120,
+                      width: 80,
+                    decoration: BoxDecoration(
+                        color: Color.fromRGBO(243, 237, 237, 1.0),
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Column(
+                   
+                        children: [
+     Align(
+       alignment: Alignment.centerRight,
+       child: Text('إسم المادة' , style: TextStyle(fontWeight: FontWeight.bold))), 
 
-    },
-  ) ,
-        ],
-        
-        
-        
-        
-        
-        )
+  Align(
+       alignment: Alignment.centerRight ,child: Text('13 محاضرة')) ,
+  Align(
+       alignment: Alignment.bottomCenter,child: Image.asset('assets/images/diary.png'  , width: 50, height: 60)),
 
-
-    ) ,
-   body: 
-   
-   
-   ListView(
-     children:[
-SizedBox(height:10 ) ,
-
-
-Image.asset('assets/images/dental_cover.jpg' ,width:double.infinity) ,
-
-SizedBox(height:8.0) ,
-Text('categories' ,  style: TextStyle(fontSize:15),) ,
-SizedBox(height:8.0) ,
-
-Container(
-  height:100 ,
-
-  color:Colors.black45 ,
-  child:   ListView.builder(
-  // shrinkWrap: true,
-    scrollDirection: Axis.horizontal,
-  
-    itemCount: lecures.length,
-  
-    itemBuilder: (BuildContext context, int index) {
-  
-    return   Card(
-  
-  color: Theme.of(context).accentColor,
-  
-  child: lecureDetails(lecures[index])
-    
-    
-    
-      ) ;
-    
-     },
-    
-    )
-  ),
-  
-  SizedBox(height:20) ,
-  
-  Text('Top courses in Orthedentic Program') ,
-  
-  Container(
-    height: 220,
-   child: ListView.builder(
-     scrollDirection: Axis.horizontal,
-     itemCount: courses.length,
-     itemBuilder: (BuildContext context, int index) {
-     return   Column(
-       children:[
-         InkWell(
-
-           onTap: (){
-                   Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Material(child: CourseDetail(course_id:courses[index]['course_id']))));
-
-           },
-                    child: Stack(
-             children:[
-Image.network(courses[index]['img'] , width:180 ,height:200) ,
-
-Positioned(bottom:10 ,right :20 ,child: Container(
-
-decoration:BoxDecoration(
-  shape: BoxShape.circle ,
-
-) ,
-child: Icon(Icons.shopping_cart)
-
-),)
-             ]
-           ),
-         ) ,
-
-
-         Text(courses[index]['course_title'])
-       ]
-     )  ;
-    },
-   ),
-  )
-  
+                      ],),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
          
-       ]
-     ),
-  
-  
-      
-      );
-    }
-  
- Widget   lecureDetails(lecur) {
-   var subject =   sujects.firstWhere((element) => element['suject_id']==lecur['subject_id']);
-   return Stack(
+        ) ,
+        //  bottomNavigationBar: BottomNavyBar(
+        //     selectedIndex: _currentIndex,
+        //     onItemSelected: (index) {
+        //       setState(() => _currentIndex = index);
+        //       _pageController.jumpToPage(index);
+        //     },
+        //     items: <BottomNavyBarItem>[
+        //       BottomNavyBarItem(
+        //           activeColor: Colors.green,
+        //       textAlign: TextAlign.center,
+        //           title: Text('الرئيسية'), icon: Icon(Icons.home)),
+        //       BottomNavyBarItem(
+        //          activeColor: Colors.purpleAccent,
+        //       textAlign: TextAlign.center,
+        //           title: Text('المواد'), icon: Icon(Icons.subject)),
+        //       BottomNavyBarItem(
+        //           activeColor: Colors.pink,
+        //       textAlign: TextAlign.center,
+        //           title: Text('الاخبار'), icon: Icon(Icons.new_releases)),
+        //       BottomNavyBarItem(
+        //          activeColor: Colors.blue,
+        //     textAlign: TextAlign.center ,
+        //           title: Text('الاساتذة'), icon: Icon(Icons.person)),
+        //     ],
+        //   ),
+        
+        );
 
-     children: [
-       Positioned( top:8  ,child:Text(lecur['title'])) ,
-       Center(child: Text(subject['subject_name']))
-     ],
-   );
- }
+    return Consumer<AnimContainer>(
+      builder: (context, value, child) => SafeArea(
+          child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Container(
+            height: double.infinity,
+            width: 200,
+            decoration: BoxDecoration(color: Colors.blue[100]),
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                return ListView(
+                  children: [
+                    Container(
+                      width: constraints.maxWidth,
+                      height: constraints.maxHeight / 3,
+                      decoration: BoxDecoration(color: Colors.blue[500]),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 30.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                                backgroundImage:
+                                    AssetImage('assets/images/user.jpg')),
+                            Text(
+                              studentProvider.getUser().name,
+                              style: GoogleFonts.cairo(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    ListTile(
+                      title: Text('الملف الشخصي'),
+                      onTap: () {
+                        Get.to(Material(
+                            child: MyPrpfole(studentProvider.getUser())));
+                      },
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    ListTile(
+                      title: Text('موقع الجامعة'),
+                      onTap: () {
+                        Get.to(Material(child: WebSite()));
+                      },
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    ListTile(
+                      title: Text('عن التطبيق'),
+                      onTap: () {},
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    ListTile(
+                      title: Text(' تسجيل خروج'),
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title: Text(' تسجيل الخروج؟'),
+                                  content: Text('هل تريد تسجيل الخروج فعلا؟'),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      color: Colors.red,
+                                      textColor: Colors.white,
+                                      child: Text('cancel'),
+                                      onPressed: () {
+                                        setState(() {
+                                          //  codeDialog = valueText;
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                    ),
+                                    FlatButton(
+                                      color: Colors.green,
+                                      textColor: Colors.white,
+                                      child: Text('OK'),
+                                      onPressed: () async {
+                                        await getStorage.write(
+                                            'islogged', false);
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    WelcomeScreen()));
 
-Future<String> downloadURLExample(String imageUrl) async {
-  String downloadURL = await FirebaseStorage.instance
-       .ref('${imageUrl}')
-      .getDownloadURL();
+                                        // await updateAddress();
+                                      },
+                                    ),
+                                  ],
+                                ));
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          AnimatedContainer(
+            //matrix
+            transform: Matrix4.rotationY(value.rotateY),
 
-      print('kdkjdfldkfldk;fk;dkf;d;fkd;fk;dfk;dkf;');
-      print(downloadURL);
+            height: double.infinity,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/images/splash2.jpg'),
+                    fit: BoxFit.cover)),
 
+            duration: Duration(milliseconds: 700),
+            child: ListView(
+              children: [
+                Container(
+                  height: 80,
+                  decoration: BoxDecoration(
+                      color: Colors.blue[200],
+                      borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(30),
+                          bottomLeft: Radius.circular(30))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                          icon: Icon(Icons.sort_outlined),
+                          onPressed: () {
+                            debugPrint('changed');
+                            if (value.rotateY == 0) {
+                              value.changeRotation(200.0);
+                            } else {
+                              value.changeRotation(0.0);
+                            }
+                          }),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('StudentApp',
+                            style: GoogleFonts.firaMono(
+                                fontWeight: FontWeight.bold, fontSize: 20)),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  height: 150,
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      autoPlay: true,
+                      autoPlayInterval: Duration(seconds: 4),
+                    ),
+                    items: [
+                      'assets/images/slide1.webp',
+                      'assets/images/slide2.webp',
+                      'assets/images/slide3.webp',
+                      'assets/images/slide4.webp',
+                      'assets/images/slide5.jpeg'
+                    ].map((i) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.symmetric(horizontal: 5.0),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(image: AssetImage(i))),
+                          );
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height / 2,
+                  decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50),
+                      )),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            FlatButton.icon(
+                                onPressed: () {
+                                  Get.to(MyCourses(studentProvider.getUser()));
+                                },
+                                icon: Icon(
+                                  Icons.laptop,
+                                  size: 60,
+                                ),
+                                label: Text('الكورسات')),
+                            FlatButton.icon(
+                                onPressed: () {
+                                  Get.to(Material(child: Events()));
+                                },
+                                icon: Icon(
+                                  FontAwesomeIcons.newspaper,
+                                  size: 60,
+                                ),
+                                label: Text('الأخبار'))
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            FlatButton.icon(
+                                onPressed: () {
+                                  Get.to(Teachers());
+                                },
+                                icon: Icon(
+                                  FontAwesomeIcons.user,
+                                  size: 60,
+                                ),
+                                label: Text('الأساتذة')),
+                            FlatButton.icon(
+                                onPressed: () {
+                                  Get.to(Consults());
+                                },
+                                icon: Icon(
+                                  FontAwesomeIcons.question,
+                                  size: 60,
+                                ),
+                                label: Text('الإستفسارات'))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      )),
+    );
+  }
 
-return downloadURL;
-  // Within your widgets:
-  // Image.network(downloadURL);
+  Widget lecureDetails(lecur) {
+    var subject = lecur['name'];
+    return Stack(
+      children: [
+        Positioned(top: 8, child: Text(lecur['dept'].toString())),
+        Center(child: Text(subject.toString()))
+      ],
+    );
+  }
 }
-}
+
+
+
+
+
+
+
+/*
+topics:
+dept
+level
+idNumber
+general
+
+IT= IT
+
+
+*/
