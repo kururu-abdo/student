@@ -12,6 +12,7 @@ import 'package:student_side/model/teacher.dart';
 import 'package:student_side/ui/views/chat_page.dart';
 import 'package:student_side/util/fcm_init.dart';
 import 'package:student_side/util/firebase_init.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TeacherProfile extends StatefulWidget {
   final Teacher teacher;
@@ -74,11 +75,11 @@ class _MyPrpfoleState extends State<TeacherProfile> {
               child: ListView(
                 children: <Widget>[
                   Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.redAccent, Colors.pinkAccent])),
+                     // decoration: BoxDecoration(
+                          // gradient: LinearGradient(
+                          //     begin: Alignment.topCenter,
+                          //     end: Alignment.bottomCenter,
+                          //     colors: [Colors.redAccent, Colors.pinkAccent])),
                       child: Container(
                         width: double.infinity,
                         height: 350.0,
@@ -88,8 +89,8 @@ class _MyPrpfoleState extends State<TeacherProfile> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  "https://www.rd.com/wp-content/uploads/2017/09/01-shutterstock_476340928-Irina-Bg.jpg",
+                                backgroundImage:   AssetImage(
+                                  "assets/images/karari.png",
                                 ),
                                 radius: 50.0,
                               ),
@@ -100,7 +101,7 @@ class _MyPrpfoleState extends State<TeacherProfile> {
                                 "${widget.teacher.name}",
                                 style: TextStyle(
                                   fontSize: 22.0,
-                                  color: Colors.white,
+                               
                                 ),
                               ),
                               SizedBox(
@@ -155,6 +156,9 @@ class _MyPrpfoleState extends State<TeacherProfile> {
                                 Center(
                                     child: ListTile(
                                   title: Text('${widget.teacher.phone}'),
+                                  trailing: IconButton(onPressed: ()  async {
+await openContacts(widget.teacher.phone);
+                                  }, icon: Icon(Icons.call)),
                                 )),
                                 Center(
                                     child: ListTile(
@@ -179,5 +183,26 @@ class _MyPrpfoleState extends State<TeacherProfile> {
         },
       ),
     );
+
   }
+openContacts(String phone) async{
+
+    // final Uri _phoneCall = Uri(
+    //   scheme: 'tel:$phone' 
+    //   // path: 'smith@example.com',
+    //   // queryParameters: {'subject': 'Example Subject & Symbols are allowed!'}
+    //   );
+
+      await launch('tel:$phone');
+}
+
+
+
+ 
+
+
+
+
+
+
 }

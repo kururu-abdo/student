@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:student_side/ui/views/home/consults/consults.dart';
 import 'package:student_side/ui/views/news/news.dart';
+import 'package:student_side/ui/views/profile_page.dart';
 import 'package:student_side/ui/views/teachers.dart';
+import 'package:student_side/ui/views/welcome_screen.dart';
+import 'package:student_side/util/constants.dart';
 import 'package:student_side/util/ui/app_colors.dart';
 
 
@@ -85,6 +89,39 @@ SizedBox(height: 30,),
 Column(
 
   children: [
+
+
+ListTile(
+
+onTap:  (){
+  Get.to(ProfilePage());
+},
+
+                  leading: Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color.fromARGB(255, 228, 247, 255)),
+                    child: Icon(
+                      Icons.person,
+                      size: 20,
+                      color: Color.fromARGB(255, 79, 18, 254),
+                    ),
+                  ),
+                  trailing: Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color.fromARGB(255, 245, 245, 246)),
+                    child: Icon(
+                      Icons.keyboard_arrow_left,
+                      color: Color.fromARGB(255, 65, 67, 82),
+                      size: 20,
+                    ),
+                  ),
+                  title: Text('الملف الشخصي',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+
+
 
 ListTile(
   leading:Container(
@@ -232,41 +269,78 @@ SizedBox(height: 30,) ,
 
 SizedBox(
               width: 50,
-  child:   Container(
-  
-   
-  
-    decoration: BoxDecoration(
-  
-      borderRadius: BorderRadius.all(Radius.circular(10)) ,
-  
-      color: Color.fromARGB(255, 245, 245, 247),
-  
-      
-  
-    ),
-  
-    margin: EdgeInsets.only(right: 20, left: 150),
+  child:   InkWell(
+    onTap:() async {
 
-  
-    child: Row(
-  
-    //mainAxisAlignment: MainAxisAlignment.spaceAround,
-  
-    children: [
-  
-      Icon(Icons.login_outlined  , color: Color.fromRGBO(252, 66, 109, 1.0),) ,
-  
-      Text('تسجيل الخروج')
-  
-  
-  
-    ],
+      Get.back();
+showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            title: Text(' تسجيل الخروج؟'),
+                            content: Text('هل تريد تسجيل الخروج فعلا؟'),
+                            actions: <Widget>[
+                              FlatButton(
+                                color: Colors.red,
+                                textColor: Colors.white,
+                                child: Text('cancel'),
+                                onPressed: () {
+                                  setState(() {
+                                    //  codeDialog = valueText;
+                                    Navigator.pop(context);
+                                  });
+                                },
+                              ),
+                              FlatButton(
+                                color: Colors.green,
+                                textColor: Colors.white,
+                                child: Text('OK'),
+                                onPressed: () async {
+                                  await getStorage.write('islogged', false);
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) => WelcomeScreen()));
+
+                                  // await updateAddress();
+                                },
+                              ),
+                            ],
+                          ));
+    } ,
+    child: Container(
+    
+     
+    
+      decoration: BoxDecoration(
+    
+        borderRadius: BorderRadius.all(Radius.circular(10)) ,
+    
+        color: Color.fromARGB(255, 245, 245, 247),
+    
+        
+    
+      ),
+    
+      margin: EdgeInsets.only(right: 20, left: 150),
   
     
-  
+      child: Row(
+    
+      //mainAxisAlignment: MainAxisAlignment.spaceAround,
+    
+      children: [
+    
+        Icon(Icons.login_outlined  , color: Color.fromRGBO(252, 66, 109, 1.0),) ,
+    
+        Text('تسجيل الخروج')
+    
+    
+    
+      ],
+    
+      
+    
+      ),
+    
     ),
-  
   ),
 )
         

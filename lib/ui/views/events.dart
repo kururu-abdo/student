@@ -74,7 +74,7 @@ Tab(
          controller: tabController,
          children: [
 
- Padding(
+        Padding(
             padding: EdgeInsets.all(8.0),
             child: FutureBuilder<List<Event>>(
               future: main_provider.getEvents(user_provider.getUser()),

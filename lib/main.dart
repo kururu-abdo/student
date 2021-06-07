@@ -159,8 +159,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
-        locale: Locale('ar', 'AR'),
-        
+        locale: Locale('ar'),
+      //   delegates: <LocalizationsDelegate<dynamic>>[
+      //   DefaultWidgetsLocalizations.delegate,
+      //   DefaultMaterialLocalizations.delegate,
+      // ],
         initialRoute: "/",
         onGenerateRoute: routes,
         home: WelcomeScreen());

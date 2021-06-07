@@ -227,7 +227,8 @@ class _NewConsultState extends State<NewConsult> {
       'student': studentProvider.getUser().toJson(), // John Doe
       'dept': studentProvider.getUser().department.toJson(), // Stokes and Sons
       'level': studentProvider.getUser().level.toJson(), // 42 ,
-      "consult": controller.text
+      "consult": controller.text ,
+      "time": DateTime.now().millisecondsSinceEpoch
     });
 
     var firebase_data = await data.get();

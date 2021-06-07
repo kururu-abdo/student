@@ -36,18 +36,13 @@ class _EventDetailsState extends State<MainEventDetails> {
     return SafeArea(
       child: Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.blue[200].withOpacity(0.5),
+        
           appBar: AppBar(
-            backgroundColor: Colors.blue,
-            elevation: 0.0,
-            toolbarHeight: 80,
+          
+        
             title: Text('التفاصيل'),
             centerTitle: true,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20),
-            )),
+           
           ),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -71,9 +66,13 @@ class _EventDetailsState extends State<MainEventDetails> {
                   height: 100,
                   child: SingleChildScrollView(
                     child: Text(
-                      widget.data.body != null ? widget.data.body : '',
+                      
+                      widget.data.body != null ? widget.data.body :
+                      widget.data.title
+                      
+                      ,
                       maxLines: 20,
-                      style: TextStyle(color: Colors.white),
+                    
                     ),
                   ),
                 ),
@@ -121,7 +120,14 @@ class _EventDetailsState extends State<MainEventDetails> {
                                 );
                               }).toList(),
                             )
-                          : Text('no files in this event')),
+                          : Column(
+                            children: [
+
+                              Image.asset('assets/images/file_not_found.png'),
+
+                              Text('لا يحتوي الخبر أو الاعلان على ااي ملفات'),
+                            ],
+                          )),
                 ),
               ],
             ),

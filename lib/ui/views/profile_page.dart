@@ -6,12 +6,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:load/load.dart';
+import 'package:student_side/app/services_provider.dart';
 import 'package:student_side/app/user_provider.dart';
+import 'package:student_side/model/level.dart';
 import 'package:student_side/model/semester.dart';
 import 'package:student_side/model/student.dart';
 import 'package:student_side/ui/views/edit_profile.dart';
 import 'package:student_side/ui/views/home/home_screen.dart';
+import 'package:student_side/util/constants.dart';
+import 'package:student_side/util/fcm_init.dart';
 import 'package:student_side/util/firebase_init.dart';
+import 'package:student_side/util/ui/app_colors.dart';
 
 class MyPrpfole extends StatefulWidget {
   final Student student;
@@ -358,5 +363,763 @@ class _MyPrpfoleState extends State<MyPrpfole> {
           .then((value) => print("User Updated"))
           .catchError((error) => print("Failed to update user: $error"));
     }
+  }
+}
+
+
+
+
+
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+class _ProfilePageState extends State<ProfilePage>
+    with SingleTickerProviderStateMixin {
+  @override
+  void initState() {
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+        var studentProvider = Provider.of<UserProvider>(context, listen: false);
+
+    return Scaffold(
+        appBar: AppBar(title:  Text(studentProvider.getUser().name) ,  centerTitle:true ),
+        bottomNavigationBar: Container(
+        padding: EdgeInsets.all(5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            new FloatingActionButton(
+                elevation: 0.0,
+            
+               child: Icon(Icons.edit),
+                onPressed: () {
+
+Get.to(EditProfile());
+
+                })
+          ],
+        ),
+      ),
+      body: _body(context),
+    );
+  }
+  _body(BuildContext context) {
+            var studentProvider = Provider.of<UserProvider>(context, listen: false);
+
+    return ListView(physics: BouncingScrollPhysics(), children: <Widget>[
+        Container(
+            padding: EdgeInsets.all(15),
+            child: Column(children: <Widget>[_headerSignUp(), _formUI(context)]))
+      ]);
+  }
+  _headerSignUp() {
+                var studentProvider = Provider.of<UserProvider>(context, listen: false);
+
+    return Column(children: <Widget>[
+        Container(height: 80, child: Icon(Icons.person  , color: AppColors.secondaryColor,size: 90)),
+        SizedBox(height: 12.0),
+        Text(  studentProvider.getUser().name ,
+            style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 20.0,
+                color: Colors.orange)),
+
+
+
+      ]
+      
+      
+      );
+  }
+  _formUI(BuildContext context) {
+       var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    return new Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(height: 12.0),
+          _id_number(),
+          SizedBox(height: 12.0),
+          _dept(),
+          SizedBox(height: 12.0),
+          _level(),
+          SizedBox(height: 12.0),
+          _semester(),
+          SizedBox(height: 12.0),
+        ],
+      ),
+    );
+  }
+
+ 
+  _dept() {
+       var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    return Row(children: <Widget>[
+      _prefixIcon(Icons.person),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('القسم',
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15.0,
+                  color: Colors.grey)),
+          SizedBox(height: 1),
+          Text(studentProvider.getUser().department.name)
+        ],
+      )
+    ]);
+  }
+  _level() {
+       var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    return Row(children: <Widget>[
+      _prefixIcon(Icons.person),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('المستوى',
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15.0,
+                  color: Colors.grey)),
+          SizedBox(height: 1),
+          Text(studentProvider.getUser().level.name)
+        ],
+      )
+    ]);
+  }
+
+
+  _semester() {
+    var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    return Row(children: <Widget>[
+      _prefixIcon(Icons.person),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('الفصل الدراسي',
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15.0,
+                  color: Colors.grey)),
+          SizedBox(height: 1),
+          Text(studentProvider.getUser().semester.name)
+        ],
+      )
+    ]);
+  }
+  _prefixIcon(IconData iconData) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 48.0, minHeight: 48.0),
+      child: Container(
+          padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+          margin: const EdgeInsets.only(right: 8.0),
+          decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.2),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  bottomLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
+                  bottomRight: Radius.circular(10.0))),
+          child: Icon(
+            iconData,
+            size: 20,
+            color: Colors.grey,
+          )),
+    );
+  }
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  _id_number() {
+
+
+
+         var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    return Row(children: <Widget>[
+      _prefixIcon(Icons.perm_identity),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('الرقم الجامعي',
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15.0,
+                  color: Colors.grey)),
+          SizedBox(height: 1),
+          Text(studentProvider.getUser().id_number)
+        ],
+      )
+    ]);
+  }
+}
+
+
+
+class EditProfile extends StatefulWidget {
+  EditProfile({Key key}) : super(key: key);
+
+  @override
+  _EditProfileState createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
+
+  List<Level> levels = [];
+ List<Semester> semesters = [];
+  Semester semester;
+    Level level;
+ fetch_semesters() async {
+    var future = await showLoadingDialog();
+
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    var sems = firestore.collection('semester');
+
+    var fetchedLevel = await sems.get();
+
+    Iterable I = fetchedLevel.docs;
+    print(
+        'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd');
+    setState(() {
+      semesters = I.map((e) => Semester.fromJson(e.data())).toList();
+    });
+
+    future.dismiss();
+  }
+
+
+  fetch_levels() async {
+    var future = await showLoadingDialog();
+
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    var level = firestore.collection('level');
+
+    var fetchedLevel = await level.get();
+
+    Iterable I = fetchedLevel.docs;
+    print(
+        'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd');
+    setState(() {
+      levels = I.map((e) => Level.fromJson(e.data())).toList();
+    });
+
+    for (var item in fetchedLevel.docs) {
+      print(item.data());
+    }
+
+//  Backendless.data.of("department").find().then((department) {
+//     print(department);
+
+// Iterable I = department;
+// setState(() {
+//   depts= I.map((dept) =>
+//    Department.fromJson(dept)).toList();
+
+// });
+
+//   });
+
+    future.dismiss();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+   
+    FirebaseInit.initFirebase();
+    fetch_levels();
+    fetch_semesters();
+//fetch_depts();
+  }
+
+
+
+  subscribe(Student student) {
+    // var data = getStorage.read('student');
+    // var student = Student.fromJson(json.decode(data));
+
+    FCMConfig.subscripeToTopic(
+        "${student.department.dept_code}${student.level.id}");
+    FCMConfig.subscripeToTopic("level${student.level.id.toString()}");
+    FCMConfig.subscripeToTopic("${student.department.dept_code}");
+
+    FCMConfig.subscripeToTopic("${student.id_number.toString()}");
+    FCMConfig.subscripeToTopic("general");
+  }
+
+  unSubscrib() {
+    var data = getStorage.read('student');
+    var student = Student.fromJson(json.decode(data));
+
+    FCMConfig.subscripeToTopic(
+        "${student.department.dept_code}${student.level.id}");
+    FCMConfig.subscripeToTopic("level${student.level.id.toString()}");
+    FCMConfig.subscripeToTopic("${student.department.dept_code}");
+
+    FCMConfig.subscripeToTopic("${student.id_number.toString()}");
+    FCMConfig.subscripeToTopic("general");
+  }
+  @override
+  Widget build(BuildContext context) {
+
+          var studentProvider = Provider.of<UserProvider>(context, listen: false);
+          var serviceProvider = Provider.of<ServiceProvider>(context, listen: false);
+
+    return Scaffold(
+    appBar: AppBar(actions: [IconButton(onPressed: (){
+      Get.to(HomeView());
+
+    }, icon: Icon(Icons.home))],
+    
+    title: Text('تعديل الملف الشخصي'),
+    centerTitle:  true
+    ),
+body: SafeArea(
+  child:   Center(
+    child: Container(
+    padding: const EdgeInsets.all(0.0),
+     //height: MediaQuery.of(context).size.height,
+    
+      child:   Form(child: Column(
+    
+      
+    
+        children: [
+    
+      
+    
+      
+    
+      
+    
+      Container(
+    
+      
+    
+                  decoration: BoxDecoration(
+    
+      
+    
+                    borderRadius: BorderRadius.circular(10.0),
+    
+      
+    
+                  ),
+    
+      
+    
+                  child: Padding(
+    
+      
+    
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+    
+      
+    
+                      child: Row(
+    
+      
+    
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+    
+      
+    
+                          children: [
+    
+      
+    
+                            Text('المستوى'),
+    
+      
+    
+                            Container(),
+    
+      
+    
+                            new DropdownButton<Level>(
+    
+      
+    
+                              value: level,
+    
+      
+    
+                              items: levels.map((level) {
+    
+      
+    
+                                return DropdownMenuItem<Level>(
+    
+      
+    
+                                  value: level,
+    
+      
+    
+                                  child: Text(level.name),
+    
+      
+    
+                                );
+    
+      
+    
+                              }).toList(),
+    
+      
+    
+                              onChanged: (newValue) {
+    
+      
+    
+                                setState(() {
+    
+      
+    
+                                  level = newValue;
+    
+      
+    
+                                });
+    
+      
+    
+                              },
+    
+      
+    
+                            )
+    
+      
+    
+                          ])),
+    
+      
+    
+                ),
+    
+      
+    
+                SizedBox(
+    
+      
+    
+                  height: 5,
+    
+      
+    
+                ),
+    
+      
+    
+                Container(
+    
+      
+    
+                  decoration: BoxDecoration(
+    
+      
+    
+                    borderRadius: BorderRadius.circular(10.0),
+    
+      
+    
+                  ),
+    
+      
+    
+                  child: Padding(
+    
+      
+    
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+    
+      
+    
+                      child: Row(
+    
+      
+    
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+    
+      
+    
+                          children: [
+    
+      
+    
+                            Text('السمستر'),
+    
+      
+    
+                            Container(),
+    
+      
+    
+                            new DropdownButton<Semester>(
+    
+      
+    
+                              value: semester,
+    
+      
+    
+                              items: semesters.map((sem) {
+    
+      
+    
+                                return DropdownMenuItem<Semester>(
+    
+      
+    
+                                  value: sem,
+    
+      
+    
+                                  child: Text(sem.name),
+    
+      
+    
+                                );
+    
+      
+    
+                              }).toList(),
+    
+      
+    
+                              onChanged: (newValue) {
+    
+      
+    
+                                setState(() {
+    
+      
+    
+                                  semester = newValue;
+    
+      
+    
+                                });
+    
+      
+    
+                              },
+    
+      
+    
+                            )
+    
+      
+    
+                          ])),
+    
+      
+    
+                ),
+    
+      
+    
+      
+    
+      
+    
+      SizedBox(height: 50.0,) ,
+    
+      
+    
+          OutlinedButton.icon(
+    
+      
+    
+                  label: Text('حفظ البيانات'),
+    
+      
+    
+                 
+    
+      
+    
+                  icon: Icon(Icons.save),
+    
+      
+    
+                  onPressed: ()  async{
+    
+      
+    
+      //unsubscribe to old things
+    
+      
+    
+      unSubscrib();
+    
+      
+    
+      
+    
+      
+    
+      //update data
+    
+      
+    
+      var data = getStorage.read('student');
+    
+      
+    
+                    var student = Student.fromJson(json.decode(data));
+    
+      
+    
+      
+    
+      
+    
+      if (this.level !=null) {
+    
+      
+    
+      student.level = this.level;
+    
+      
+    
+       serviceProvider.updateStudent(student).then((value) {
+    
+      
+    
+                        getStorage.write('student', json.encode(student.toJson()));
+    
+      
+    
+                      });
+    
+      
+    
+      
+    
+      
+    
+                      subscribe(student);
+    
+      
+    
+      
+    
+      
+    
+      }
+    
+      
+    
+      if (this.semester != null) {
+    
+      
+    
+      student.semester =  this.semester;
+    
+      
+    
+      serviceProvider.updateStudent(student).then((value) {
+    
+      
+    
+                        getStorage.write('student', json.encode(student.toJson()));
+    
+      
+    
+                      });
+    
+      
+    
+      
+    
+      
+    
+                      subscribe(student);
+    
+      
+    
+      
+    
+      
+    
+      }
+    
+      
+    
+      
+    
+      
+    
+       
+    
+      
+    
+      
+    
+      
+    
+      //
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+                  },
+    
+      
+    
+                )
+    
+      
+    
+        ],
+    
+      
+    
+      )),
+    
+    ),
+  ),
+),
+
+
+
+    );
   }
 }

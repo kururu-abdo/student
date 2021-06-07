@@ -90,7 +90,15 @@ class _LectureDisscusionState extends State<EventDeitals> {
                                   },
                                 ),
                               )
-                            : Text('no document with this lecture'))
+                            : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+
+Image.asset('assets/images/file_not_found.png') ,
+
+                                Text('no document with this lecture'),
+                              ],
+                            ))
                   ],
                 ),
               ),

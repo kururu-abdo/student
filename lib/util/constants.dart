@@ -242,7 +242,15 @@ const String ISLOGGEDIN= 'isloggedin';
 const String PHONE ='phone';
 
 const String PASSWORD = 'password';
-
+var DAYS = [
+  {"id": 1, "name": "السبت"},
+  {"id": 2, "name": "الأحد"},
+  {"id": 3, "name": "الاثنين"},
+  {"id": 4, "name": "الثلاثاء"},
+  {"id": 5, "name": "الاربعاء"},
+  {"id": 6, "name": "الخميس"},
+  {"id": 7, "name": "الجمعة"}
+];
 
 
 // const AndroidNotificationChannel channel = AndroidNotificationChannel(

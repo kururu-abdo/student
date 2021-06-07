@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:student_side/main.dart';
+import 'package:student_side/model/notification.dart';
+import 'package:student_side/util/local_datase.dart';
 
 
 class FCMConfig {
@@ -15,10 +19,21 @@ class FCMConfig {
     debugPrint('config notfication');
   
  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+
+
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
 
       if (notification != null && android != null) {
+debugPrint('config notfication');
+
+        DBProvider.db.newNotification(
+LocalNotification(title: notification.title ,  object:json.encode(message.data) , 
+
+time: DateTime.now()
+ )
+
+        );
         flutterLocalNotificationsPlugin.show(
             notification.hashCode,
             notification.title,
@@ -42,7 +57,41 @@ class FCMConfig {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print(message.data.toString());
+
+
+
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        debugPrint('config notfication');
+
+        DBProvider.db.newNotification(LocalNotification(
+            title: notification.title,
+            object: json.encode(message.data),
+            time: DateTime.now()));
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+                AndroidNotificationDetails(
+                    'channel', 'channelName', 'channelDescription'),
+                null
+                // android:
+                //  AndroidNotificationDetails(
+                //   channel.id,
+                //   channel.name,
+                //   channel.description,
+                //   // TODO add a proper drawable resource to android, for now using
+                //   //      one that already exists in example app.
+                //   icon: 'launch_background',
+                // ),
+                // null
+                ));
+      }
+
+
       Get.toNamed('notification');
     });
 

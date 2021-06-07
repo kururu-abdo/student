@@ -16,12 +16,15 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:load/load.dart';
 import 'package:student_side/app/animated_container.dart';
+import 'package:student_side/app/services_provider.dart';
+import 'package:student_side/app/subject_bloc.dart';
 import 'package:student_side/app/user_provider.dart';
 import 'package:student_side/model/day.dart';
 import 'package:student_side/model/department.dart';
 import 'package:student_side/model/level.dart';
 import 'package:student_side/model/semester.dart';
 import 'package:student_side/model/student.dart';
+import 'package:student_side/model/subject.dart';
 import 'package:student_side/ui/views/events.dart';
 import 'package:student_side/ui/views/home/consults/consults.dart';
 import 'package:student_side/ui/views/home/consults/new_consult.dart';
@@ -38,6 +41,7 @@ import 'package:student_side/util/fcm_init.dart';
 import 'package:student_side/ui/views/courses_page.dart';
 import 'package:student_side/util/local_notifications.dart';
 import 'package:student_side/util/ui/app_colors.dart';
+import 'package:student_side/util/ui/notifcatin_page.dart';
 import 'package:tinycolor/tinycolor.dart';
 
 import '../courses_page.dart';
@@ -79,7 +83,7 @@ class _State extends State<HomeView> {
     fetch_subjects();
     getDaysOfWeek().then((value){
 setState(() {
-  selectedDay=days[0];
+  selectedDay=DAYS[0];
 });
 
     });
@@ -125,7 +129,7 @@ setState(() {
 
   List<Semester> semsters = [];
   Semester semester;
-  Day selectedDay;
+  Map selectedDay;
   int _currentIndex = 0;
   PageController _pageController;
   fetch_semesters() async {
@@ -206,11 +210,16 @@ String getDateOfTheDay(int day) {
     final formattedDate = formatter.format(lastMonday);
         return formattedDate;
   }
+
+  bool      isShow=false;
+
   @override
   Widget build(BuildContext context) {
     var animProvider = Provider.of<AnimContainer>(context);
     var studentProvider = Provider.of<UserProvider>(context);
     var rotate = Provider.of<AnimContainer>(context).rotateY;
+    var serviceProvider = Provider.of<ServiceProvider>(context);
+    var subjectProvider = Provider.of<SubjectProvider>(context);
 
     return Scaffold(
       key: _scflKey,
@@ -237,7 +246,12 @@ String getDateOfTheDay(int day) {
                       children: [
 
                         IconButton(
-                            icon: Icon(Icons.notifications), onPressed: () {}),
+                            icon: Icon(Icons.notifications), onPressed: () {
+
+
+Get.to(NotificationPage({})  );
+
+                            }),
 
                             
                         IconButton(
@@ -254,7 +268,7 @@ String getDateOfTheDay(int day) {
                 height: 20.0,
               ),
 
-Center(child: Text('مرحبا  ,   عابدة' ,   style: TextStyle(fontWeight: FontWeight.bold , fontSize: 15),)) ,
+Center(child: Text('مرحبا  ,   $name' ,   style: TextStyle(fontWeight: FontWeight.bold , fontSize: 15),)) ,
  SizedBox(
                 height: 10.0,
               ),
@@ -265,7 +279,10 @@ Center(child: Text('مرحبا  ,   عابدة' ,   style: TextStyle(fontWeight:
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text(getformattedToday()), Icon(Icons.calendar_today_outlined)],
+                children: [
+                  
+                  Text(getformattedToday()), Icon(Icons.calendar_today_outlined)
+                  ],
               ),
               SizedBox(
                 height: 5.0,
@@ -282,46 +299,99 @@ Center(child: Text('مرحبا  ,   عابدة' ,   style: TextStyle(fontWeight:
                 height: 100,
                 width: double.infinity,
                 child: ListView.builder(
-                  itemCount: days.length,
+                  itemCount: DAYS.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (BuildContext context, int index) {
                  
 
 
-                    if (isToday(days[index].id)) {
-                      selectedDay=days[index];
-                    }
+                    // if (isToday(days[index].id)) {
+                    //   selectedDay=days[index];
+                    // }
 
                     
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Text(days[index].name),
-                            Container(
-                              height: 20,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                  color:
-                                   isToday (days[index].id) ? Colors.black : Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              child: Text(
-                               getDateOfTheDay(days[index].id),
-                                style: TextStyle(
-                                    color:      isToday(days[index].id)
-                                        ? Colors.white
-                                        : Colors.black),
-                              ),
-                            ),
-                            Icon(Icons.more_horiz)
-                          ]),
+                    return InkWell(
+                      onTap: () async{
+                                                                          selectedDay = DAYS[index];
+
+                        setState(() {
+                                                  selectedDay = DAYS[index];
+isShow=true;
+                        });
+
+
+await serviceProvider.getTimeTable(studentProvider.getUser(), selectedDay);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                            // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text(DAYS[index]['name']),
+                              // Container(
+                              //   height: 20,
+                              //   width: 30,
+                              //   decoration: BoxDecoration(
+                              //       color:
+                              //        isToday (DAYS[index]['id']) ? Colors.black : Colors.white,
+                              //       borderRadius:
+                              //           BorderRadius.all(Radius.circular(10))),
+                              //   child: Text(
+                              //    getDateOfTheDay(days[index].id),
+                              //     style: TextStyle(
+                              //         color:      isToday(days[index].id)
+                              //             ? Colors.white
+                              //             : Colors.black),
+                              //   ),
+                              // ),
+                              Icon(Icons.more_horiz)
+                            ]),
+                      ),
                     );
                   },
                 ),
               ),
-              Visibility(visible: false, child: Container()),
+              Visibility(visible: isShow, child: Container(
+   height: MediaQuery.of(context).size.height/3 ,
+
+
+   child: FutureBuilder<List<Map>>(
+     future: serviceProvider.getTimeTable(studentProvider.getUser(), selectedDay),
+     builder: (BuildContext context, AsyncSnapshot<List<Map>> snapshot) {
+
+if (snapshot.connectionState ==ConnectionState.done) {
+if (snapshot.hasData  &&  snapshot.data.length>0) {
+  return  ListView.builder(
+    itemCount: snapshot.data.length,
+    itemBuilder: (BuildContext context, int index) {
+    return   Card(
+      child: ListTile(title:  Text(snapshot.data[index]["subject"]['name']) ,
+      subtitle: Row(children: [
+        Text(
+                                          snapshot.data[index]['from']) ,
+ Text("---"),
+
+ Text(snapshot.data[index]['to']),
+
+
+      ],),
+      leading: Image.asset('assets/images/subject.png'),
+trailing: Text(snapshot.data[index]['hall'] ,   overflow: TextOverflow.ellipsis,) ,      
+         ),
+    ) ; 
+   },
+  );
+} 
+return  Center(
+                          child: Text('لا توجد محاضرات في هذا اليوم '),
+                        );
+}
+return Center(child: CircularProgressIndicator(),);
+
+     },
+   ),
+
+              )),
               SizedBox(
                 height: 20.0,
               ),
@@ -361,102 +431,59 @@ Navigator.of(context).push(
                 height: 20.0,
               ),
               Container(
-                height: MediaQuery.of(context).size.height/2,
-                child: GridView.count(
+                height: MediaQuery.of(context).size.height/4,
+                child: FutureBuilder<List<ClassSubject>>(
+                  future: subjectProvider.get2subjects(studentProvider.getUser()),
+                  builder: (BuildContext context, AsyncSnapshot<List<ClassSubject>> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return 
+                  GridView.count(
                   crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10 ,
-                  children: 
+                  children: snapshot.data.map((subject) => 
+                  Container(
+                              height: 120,
+                              width: 80,
+                              decoration: BoxDecoration(
+                                  color: Color.fromRGBO(255, 224, 226, 1.0),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              child: Column(
+                                children: [
+                                  Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(subject.name,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold))),
+                                  // Align(
+                                  //     alignment: Alignment.centerRight,
+                                  //     child: Text(subject.)),
+                                  SizedBox(height: 15.0,) ,
+                                  Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Image.asset(
+                                          'assets/images/diary.png',
+                                          width: 50,
+                                          height: 60)),
+                                ],
+                              ),
+                            )
+                  ).toList(),
                   
                   
-                  [
-                    Container(
-                      height: 120,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO( 255, 224, 226 ,1.0) ,
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                      
-                      child: Column(
-                   
-                        children: [
-     Align(
-       alignment: Alignment.centerRight,
-       child: Text('إسم المادة' , style: TextStyle(fontWeight: FontWeight.bold))), 
-
-  Align(
-       alignment: Alignment.centerRight ,child: Text('13 محاضرة')) ,
-  Align(
-       alignment: Alignment.bottomCenter,child: Image.asset('assets/images/diary.png'  , width: 50, height: 60)),
-
-                      ],),
-                    ) ,
-
-                     Container(
-                      height: 120,
-                      width: 80,
-                    decoration: BoxDecoration(
-                        color: Color.fromRGBO(245, 244, 239, 1.0),
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    child: Column(
-                   
-                        children: [
-     Align(
-       alignment: Alignment.centerRight,
-       child: Text('إسم المادة' , style: TextStyle(fontWeight: FontWeight.bold))), 
-
-  Align(
-       alignment: Alignment.centerRight ,child: Text('13 محاضرة')) ,
-  Align(
-       alignment: Alignment.bottomCenter,child: Image.asset('assets/images/diary.png'  , width: 50, height: 60)),
-
-                      ],),
-                    ) ,
-
-                     Container(
-                      height: 120,
-                      width: 80,
-                     decoration: BoxDecoration(
-                        color: Color.fromRGBO(223, 226, 254, 1.0),
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    child: Column(
-                      children: [
-                        Align(
-                            alignment: Alignment.centerRight,
-                            child: Text('إسم المادة',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        Align(
-                            alignment: Alignment.centerRight,
-                            child: Text('13 محاضرة')),
-                        Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Image.asset('assets/images/diary.png',
-                                width: 50, height: 60)),
-                      ],
-                    ),
-                    ) ,
-                    Container(
-                      height: 120,
-                      width: 80,
-                    decoration: BoxDecoration(
-                        color: Color.fromRGBO(243, 237, 237, 1.0),
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    child: Column(
-                   
-                        children: [
-     Align(
-       alignment: Alignment.centerRight,
-       child: Text('إسم المادة' , style: TextStyle(fontWeight: FontWeight.bold))), 
-
-  Align(
-       alignment: Alignment.centerRight ,child: Text('13 محاضرة')) ,
-  Align(
-       alignment: Alignment.bottomCenter,child: Image.asset('assets/images/diary.png'  , width: 50, height: 60)),
-
-                      ],),
-                    )
-                  ],
+                  ); 
+                    
+                  },
                 ),
+                
+                
+                
               )
             ],
           ),

@@ -72,30 +72,33 @@ class _ConsultCardState extends State<ConsultCard> {
   }
 
   String timeWidgetText(int t) {
-    var date = DateTime.fromMillisecondsSinceEpoch(t*100);
+ var format = new DateFormat('d MMM, hh:mm a');
+    var date = new DateTime.fromMillisecondsSinceEpoch(t );
+var formattedDate = DateFormat.yMMMd().format(date); // Apr 8, 2020
+
 
     var now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+   var formattedToday =  DateFormat.yMMMd().format(today);
 
-    var difference = date.difference(now);
-    String months, weeks, days, hours, minutes;
-    var format = new DateFormat('HH:mm a');
 
-    var time = '';
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+   var formattedYesterDay =  DateFormat.yMMMd().format(yesterday);
 
-    if (difference.inSeconds <= 0 ||
-        difference.inSeconds > 0 && difference.inMinutes == 0 ||
-        difference.inMinutes > 0 && difference.inHours == 0 ||
-        difference.inHours > 0 && difference.inDays == 0) {
-      //time = difference.format(date);
+  String time ='';
 
-    } else {
-      if (difference.inDays == 1) {
-        time =  'أمس';
-      } else {
-        time = difference.inDays.toString() + 'يوم';
-      }
-    }
+if(formattedDate == formattedToday) {
+  time ="اليوم" ;
+} else if(formattedDate == formattedYesterDay) {
+  time ="الأمس";
 
+}else{
+
+
+
+  time = formattedDate;
+}
+    
     return time;
   }
   Widget _PostDetails() {
@@ -156,9 +159,9 @@ class _ConsutDetailsState extends State<ConsutDetails> {
                 style: TextStyle(fontSize: 15.0),
                 maxLines: 15,
               )),
-        ),
-        Container(
-          height: 50,
+        ) ,
+        ConstrainedBox(
+          constraints: BoxConstraints.tightFor(height: 300),
           child: TextFormField(
             maxLines: 15,
             decoration: InputDecoration(
@@ -167,9 +170,9 @@ class _ConsutDetailsState extends State<ConsutDetails> {
                 icon: Icon(Icons.send),
                 onPressed: () async {
                   // add  a comment
-
+        
                   //push a notification to owner of the consult
-
+        
                   //push a notification to all commantators
                 },
               ),

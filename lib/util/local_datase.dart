@@ -21,70 +21,46 @@ class DBProvider {
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE Notification ("
-          "id INTEGER PRIMARY KEY   Auto Increment,"
-          "time DATETIME,"
+          "id INTEGER PRIMARY KEY  AUTOINCREMENT ,"
+          "time INTEGER  ,"
           "title  TEXT,"
           "screen TEXT,"
           "object TEXT ,"
-          "isread INTEGER"
-          ")");
+          "isread BIT ) "
+          );
     });
   }
 
-  newNotification(Notification notification) async {
+  newNotification(LocalNotification notification) async {
     final db = await database;
     //get the biggest id in the table
  
     var raw = await db.rawInsert(
-        "INSERT Into Client (time,title,screen  ,object)"
+        "INSERT Into Notification (time,title,screen  ,object ,isread)"
         " VALUES (?,?,?,?)",
-        [DateTime.now(),notification.title ,notification.screen, notification.object ]);
+        [DateTime.now().millisecondsSinceEpoch,notification.title ,notification.screen, notification.object ,   false ]);
     return raw;
   }
-  // blockOrUnblock(Client client) async {
-  //   final db = await database;
-  //   Client blocked = Client(
-  //       id: client.id,
-  //       firstName: client.firstName,
-  //       lastName: client.lastName,
-  //       blocked: !client.blocked);
-  //   var res = await db.update("Client", blocked.toMap(),
-  //       where: "id = ?", whereArgs: [client.id]);
-  //   return res;
-  // }
-  // updateClient(Client newClient) async {
-  //   final db = await database;
-  //   var res = await db.update("Client", newClient.toMap(),
-  //       where: "id = ?", whereArgs: [newClient.id]);
-  //   return res;
-  // }
-  // getClient(int id) async {
-  //   final db = await database;
-  //   var res = await db.query("Client", where: "id = ?", whereArgs: [id]);
-  //   return res.isNotEmpty ? Client.fromMap(res.first) : null;
-  // }
-  // Future<List<Client>> getBlockedClients() async {
-  //   final db = await database;
-  //   print("works");
-  //   // var res = await db.rawQuery("SELECT * FROM Client WHERE blocked=1");
-  //   var res = await db.query("Client", where: "blocked = ? ", whereArgs: [1]);
-  //   List<Client> list =
-  //       res.isNotEmpty ? res.map((c) => Client.fromMap(c)).toList() : [];
-  //   return list;
-  // }
-  // Future<List<Client>> getAllClients() async {
-  //   final db = await database;
-  //   var res = await db.query("Client");
-  //   List<Client> list =
-  //       res.isNotEmpty ? res.map((c) => Client.fromMap(c)).toList() : [];
-  //   return list;
-  // }
-  // deleteClient(int id) async {
-  //   final db = await database;
-  //   return db.delete("Client", where: "id = ?", whereArgs: [id]);
-  // }
+
+updateNotifica(LocalNotification notification) async{
+    final db = await database;
+
+int res = await db.update('Notification', notification.toJson(),
+        where: "id = ?", whereArgs: <int>[notification.id]);
+    return res > 0 ? true : false;
+}
+
+
+   Future<List<LocalNotification>> getAllNotification() async {
+    final db = await database;
+    var res = await db.query("Notification");
+    List<LocalNotification> list =
+        res.isNotEmpty ? res.map((c) => LocalNotification.fromJson(c)).toList() : [];
+    return list;
+  }
+
   deleteAll() async {
     final db = await database;
-    db.rawDelete("Delete * from Client");
+    db.rawDelete("Delete * from Notification");
   }
 }
