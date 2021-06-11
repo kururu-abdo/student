@@ -160,6 +160,20 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         locale: Locale('ar'),
+
+
+        theme: ThemeData(
+
+backgroundColor: Color(0xFF172277) ,
+          primaryColor:  Color(0xFF172277),
+fontFamily: 'Georgia',
+          colorScheme: ColorScheme.light(
+            background: Color(0xFF172277) ,
+            onBackground: Colors.white ,
+
+            primary: Color(0xFF172277)
+          )
+        ),
       //   delegates: <LocalizationsDelegate<dynamic>>[
       //   DefaultWidgetsLocalizations.delegate,
       //   DefaultMaterialLocalizations.delegate,

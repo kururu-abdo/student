@@ -214,6 +214,31 @@ color: AppColors.primaryColor,
   }
 
   String getDayText(int nowDay, int day) {
+//  var format = new DateFormat('d MMM, hh:mm a');
+//     var date = new DateTime.fromMillisecondsSinceEpoch(t);
+//     var formattedDate = DateFormat.yMMMd().format(date); // Apr 8, 2020
+
+//     var now = DateTime.now();
+//     final today = DateTime(now.year, now.month, now.day);
+//     var formattedToday = DateFormat.yMMMd().format(today);
+
+//     final yesterday = DateTime(now.year, now.month, now.day - 1);
+//     var formattedYesterDay = DateFormat.yMMMd().format(yesterday);
+
+//     String time = '';
+
+//     if (formattedDate == formattedToday) {
+//       time = "اليوم";
+//     } else if (formattedDate == formattedYesterDay) {
+//       time = "الأمس";
+//     } else {
+//       time = formattedDate;
+//     }
+
+//     return time;
+
+
+
     if (nowDay == day) {
       return 'اليوم';
     } else if (nowDay - day == 1) {

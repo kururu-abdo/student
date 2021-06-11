@@ -37,7 +37,7 @@ class DBProvider {
  
     var raw = await db.rawInsert(
         "INSERT Into Notification (time,title,screen  ,object ,isread)"
-        " VALUES (?,?,?,?)",
+        " VALUES (?,?,?,?,?)",
         [DateTime.now().millisecondsSinceEpoch,notification.title ,notification.screen, notification.object ,   false ]);
     return raw;
   }

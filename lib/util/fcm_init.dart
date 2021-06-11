@@ -66,7 +66,9 @@ time: DateTime.now()
       if (notification != null && android != null) {
         debugPrint('config notfication');
 
-        DBProvider.db.newNotification(LocalNotification(
+        DBProvider.db.newNotification(
+          LocalNotification(
+            screen: message.data['screen'],
             title: notification.title,
             object: json.encode(message.data),
             time: DateTime.now()));

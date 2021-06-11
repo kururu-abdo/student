@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -223,7 +224,9 @@ String getDateOfTheDay(int day) {
 
     return Scaffold(
       key: _scflKey,
-        backgroundColor: Color.fromARGB(255, 254, 255, 255),
+     // backgroundColor:  Color(0xFF172277),
+     //254 , 255,  255
+      backgroundColor: Color.fromARGB(255, 254, 255, 255),
         drawer :MainDrawer(),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -281,7 +284,7 @@ Center(child: Text('مرحبا  ,   $name' ,   style: TextStyle(fontWeight: Font
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   
-                  Text(getformattedToday()), Icon(Icons.calendar_today_outlined)
+                  Text(getformattedToday() ,  style :TextStyle(fontSize: 20) ), Icon(Icons.calendar_today_outlined ,  color: Colors.red,)
                   ],
               ),
               SizedBox(
@@ -301,6 +304,7 @@ Center(child: Text('مرحبا  ,   $name' ,   style: TextStyle(fontWeight: Font
                 child: ListView.builder(
                   itemCount: DAYS.length,
                   scrollDirection: Axis.horizontal,
+                  physics: BouncingScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
                  
 
@@ -322,30 +326,47 @@ isShow=true;
 
 await serviceProvider.getTimeTable(studentProvider.getUser(), selectedDay);
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                            // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Text(DAYS[index]['name']),
-                              // Container(
-                              //   height: 20,
-                              //   width: 30,
-                              //   decoration: BoxDecoration(
-                              //       color:
-                              //        isToday (DAYS[index]['id']) ? Colors.black : Colors.white,
-                              //       borderRadius:
-                              //           BorderRadius.all(Radius.circular(10))),
-                              //   child: Text(
-                              //    getDateOfTheDay(days[index].id),
-                              //     style: TextStyle(
-                              //         color:      isToday(days[index].id)
-                              //             ? Colors.white
-                              //             : Colors.black),
-                              //   ),
-                              // ),
-                              Icon(Icons.more_horiz)
-                            ]),
+                      child: Container(
+                        width: 60,
+                        height: 80,
+                        margin: 
+              EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+
+                          color:  generateRandomColor1()  ,
+                          borderRadius: BorderRadius.vertical(
+top: Radius.circular(15) ,
+
+bottom: Radius.circular(15) ,
+
+
+                          )
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                              // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(DAYS[index]['name']),
+                                // Container(
+                                //   height: 20,
+                                //   width: 30,
+                                //   decoration: BoxDecoration(
+                                //       color:
+                                //        isToday (DAYS[index]['id']) ? Colors.black : Colors.white,
+                                //       borderRadius:
+                                //           BorderRadius.all(Radius.circular(10))),
+                                //   child: Text(
+                                //    getDateOfTheDay(days[index].id),
+                                //     style: TextStyle(
+                                //         color:      isToday(days[index].id)
+                                //             ? Colors.white
+                                //             : Colors.black),
+                                //   ),
+                                // ),
+                                Icon(Icons.more_horiz)
+                              ]),
+                        ),
                       ),
                     );
                   },
@@ -517,264 +538,19 @@ Navigator.of(context).push(
         
         );
 
-    return Consumer<AnimContainer>(
-      builder: (context, value, child) => SafeArea(
-          child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Container(
-            height: double.infinity,
-            width: 200,
-            decoration: BoxDecoration(color: Colors.blue[100]),
-            child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                return ListView(
-                  children: [
-                    Container(
-                      width: constraints.maxWidth,
-                      height: constraints.maxHeight / 3,
-                      decoration: BoxDecoration(color: Colors.blue[500]),
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 30.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CircleAvatar(
-                                backgroundImage:
-                                    AssetImage('assets/images/user.jpg')),
-                            Text(
-                              studentProvider.getUser().name,
-                              style: GoogleFonts.cairo(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    ListTile(
-                      title: Text('الملف الشخصي'),
-                      onTap: () {
-                        Get.to(Material(
-                            child: MyPrpfole(studentProvider.getUser())));
-                      },
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    ListTile(
-                      title: Text('موقع الجامعة'),
-                      onTap: () {
-                        Get.to(Material(child: WebSite()));
-                      },
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    ListTile(
-                      title: Text('عن التطبيق'),
-                      onTap: () {},
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    ListTile(
-                      title: Text(' تسجيل خروج'),
-                      onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                                  title: Text(' تسجيل الخروج؟'),
-                                  content: Text('هل تريد تسجيل الخروج فعلا؟'),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      color: Colors.red,
-                                      textColor: Colors.white,
-                                      child: Text('cancel'),
-                                      onPressed: () {
-                                        setState(() {
-                                          //  codeDialog = valueText;
-                                          Navigator.pop(context);
-                                        });
-                                      },
-                                    ),
-                                    FlatButton(
-                                      color: Colors.green,
-                                      textColor: Colors.white,
-                                      child: Text('OK'),
-                                      onPressed: () async {
-                                        await getStorage.write(
-                                            'islogged', false);
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (_) =>
-                                                    WelcomeScreen()));
-
-                                        // await updateAddress();
-                                      },
-                                    ),
-                                  ],
-                                ));
-                      },
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-          AnimatedContainer(
-            //matrix
-            transform: Matrix4.rotationY(value.rotateY),
-
-            height: double.infinity,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('assets/images/splash2.jpg'),
-                    fit: BoxFit.cover)),
-
-            duration: Duration(milliseconds: 700),
-            child: ListView(
-              children: [
-                Container(
-                  height: 80,
-                  decoration: BoxDecoration(
-                      color: Colors.blue[200],
-                      borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(30),
-                          bottomLeft: Radius.circular(30))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                          icon: Icon(Icons.sort_outlined),
-                          onPressed: () {
-                            debugPrint('changed');
-                            if (value.rotateY == 0) {
-                              value.changeRotation(200.0);
-                            } else {
-                              value.changeRotation(0.0);
-                            }
-                          }),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('StudentApp',
-                            style: GoogleFonts.firaMono(
-                                fontWeight: FontWeight.bold, fontSize: 20)),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  height: 150,
-                  child: CarouselSlider(
-                    options: CarouselOptions(
-                      autoPlay: true,
-                      autoPlayInterval: Duration(seconds: 4),
-                    ),
-                    items: [
-                      'assets/images/slide1.webp',
-                      'assets/images/slide2.webp',
-                      'assets/images/slide3.webp',
-                      'assets/images/slide4.webp',
-                      'assets/images/slide5.jpeg'
-                    ].map((i) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.symmetric(horizontal: 5.0),
-                            decoration: BoxDecoration(
-                                image: DecorationImage(image: AssetImage(i))),
-                          );
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height / 2,
-                  decoration: BoxDecoration(
-                      color: Colors.white70,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(50),
-                        topRight: Radius.circular(50),
-                      )),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            FlatButton.icon(
-                                onPressed: () {
-                                  Get.to(MyCourses(studentProvider.getUser()));
-                                },
-                                icon: Icon(
-                                  Icons.laptop,
-                                  size: 60,
-                                ),
-                                label: Text('الكورسات')),
-                            FlatButton.icon(
-                                onPressed: () {
-                                  Get.to(Material(child: Events()));
-                                },
-                                icon: Icon(
-                                  FontAwesomeIcons.newspaper,
-                                  size: 60,
-                                ),
-                                label: Text('الأخبار'))
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            FlatButton.icon(
-                                onPressed: () {
-                                  Get.to(Teachers());
-                                },
-                                icon: Icon(
-                                  FontAwesomeIcons.user,
-                                  size: 60,
-                                ),
-                                label: Text('الأساتذة')),
-                            FlatButton.icon(
-                                onPressed: () {
-                                  Get.to(Consults());
-                                },
-                                icon: Icon(
-                                  FontAwesomeIcons.question,
-                                  size: 60,
-                                ),
-                                label: Text('الإستفسارات'))
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      )),
-    );
   }
-
+Color generateRandomColor1() {
+    // Define all colors you want here
+    const predefinedColors = [
+      Colors.red,
+      Colors.green,
+      Colors.blue,
+     
+      Colors.white
+    ];
+    Random random = Random();
+    return predefinedColors[random.nextInt(predefinedColors.length)];
+  }
   Widget lecureDetails(lecur) {
     var subject = lecur['name'];
     return Stack(
