@@ -34,17 +34,17 @@ dependencies:
   auto_size_text: ^2.1.0
   animations:
   uuid: ^2.0.4
-  flutter_speed_dial: ^2.1.1
+  flutter_speed_dial: ^3.0.5
   http: ^0.12.1 
   url_launcher: ^6.0.2
   intl:
-  bottom_navy_bar: ^5.6.0
+  bottom_navy_bar: ^6.0.0
 
   webview_flutter: ^2.0.2    
-  firebase_messaging: "^9.0.1"
-  animated_text_kit: ^3.1.2
+  firebase_messaging: ^10.0.2
+  animated_text_kit: ^4.2.1
   extended_image: ^2.0.0
-  cloud_firestore: ^1.0.2
+  cloud_firestore: ^2.2.2
   load: ^1.0.0
   flutter_svg: ^0.22.0
   path:  
@@ -60,19 +60,23 @@ dependencies:
   flutter_keyboard_visibility: ^3.0.0
   stacked_services:
   auto_route:
-  percent_indicator: ^2.1.9
+  percent_indicator: ^3.0.1
   page_transition: "^2.0.2"
-  flutter_signin_button: ^1.1.0
+  flutter_signin_button: ^2.0.0
   flutter_local_notifications:
   flutter_rating: ^0.0.2
-  font_awesome_flutter: ^8.11.0
+  font_awesome_flutter: ^9.1.0
   google_fonts:
   get_it:
+  open_file: ^3.2.1  
+  flutter_pdfview: ^1.1.0
+  flutter_filereader: ^2.2.0
+
   get:
   carousel_slider: ^3.0.0
   
   flutter_downloader: ^1.5.2
-  fluttertoast: ^7.1.8
+  fluttertoast: ^8.0.7
   flutter_conditional_rendering: ^2.0.0
   get_storage:
 dev_dependencies:

@@ -24,7 +24,7 @@ class DBProvider {
           "id INTEGER PRIMARY KEY  AUTOINCREMENT ,"
           "time INTEGER  ,"
           "title  TEXT,"
-          "screen TEXT,"
+          
           "object TEXT ,"
           "isread BIT ) "
           );
@@ -36,9 +36,9 @@ class DBProvider {
     //get the biggest id in the table
  
     var raw = await db.rawInsert(
-        "INSERT Into Notification (time,title,screen  ,object ,isread)"
-        " VALUES (?,?,?,?,?)",
-        [DateTime.now().millisecondsSinceEpoch,notification.title ,notification.screen, notification.object ,   false ]);
+        "INSERT Into Notification (time,title  ,object ,isread)"
+        " VALUES (?,?,?,?)",
+        [DateTime.now().millisecondsSinceEpoch,notification.title, notification.object ,   false ]);
     return raw;
   }
 

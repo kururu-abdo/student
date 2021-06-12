@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:load/load.dart';
 import 'package:student_side/app/user_provider.dart';
 import 'package:student_side/model/consult.dart';
@@ -200,17 +201,43 @@ color: AppColors.primaryColor,
             )));
   }
 
-  Widget dateFormatWidget(Timestamp time) {
-    DateTime date = time.toDate();
-    var now = DateTime.now();
-    var nowDay = now.weekday;
-    var day = date.weekday;
+  Widget dateFormatWidget(Timestamp timestamp){
+    DateTime date = timestamp.toDate();
+    // var now = DateTime.now();
+    // var nowDay = now.weekday;
+    // var day = date.weekday;
 
+
+
+ var format = new DateFormat('d MMM, hh:mm a');
+   // var date = new DateTime.fromMillisecondsSinceEpoch(t);
+    var formattedDate = DateFormat.yMMMd().format(date); // Apr 8, 2020
+
+    var now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    var formattedToday = DateFormat.yMMMd().format(today);
+
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    var formattedYesterDay = DateFormat.yMMMd().format(yesterday);
+
+    String time = '';
+
+    if (formattedDate == formattedToday) {
+      time = "اليوم";
+    } else if (formattedDate == formattedYesterDay) {
+      time = "الأمس";
+    } else {
+      time = formattedDate;
+    }
+
+  return Container(
+      child: Text(time),
+    );
     // print(day);
     // print(Days.values[Days.values[day].index]   );
-    return Container(
-      child: Text(getDayText(nowDay, day)),
-    );
+    // return Container(
+    //   child: Text(getDayText(nowDay, day)),
+    // );
   }
 
   String getDayText(int nowDay, int day) {
