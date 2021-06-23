@@ -27,6 +27,7 @@ import 'package:student_side/ui/views/home/home_screen.dart';
 import 'package:student_side/ui/views/subject_details.dart';
 import 'package:student_side/ui/views/welcome_screen.dart';
 import 'package:student_side/util/chat_page_args.dart';
+import 'package:student_side/util/keys.dart';
 import 'package:student_side/util/local_datase.dart';
 import 'package:student_side/util/ui/app_colors.dart';
 import 'package:student_side/util/ui/notifcatin_page.dart';
@@ -51,8 +52,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
     DBProvider.db.newNotification(LocalNotification(
         title: notification.title,
+          body: notification.body,
         object: json.encode(message.data),
-        time: DateTime.now()));
+        time: DateTime.now().millisecondsSinceEpoch));
     flutterLocalNotificationsPlugin.show(
         notification.hashCode,
         notification.title,
@@ -162,30 +164,22 @@ void main() async {
     sound: true,
   );
 
-  runApp(LoadingProvider(
-      themeData: LoadingThemeData(
-        tapDismiss: false ,
-        
-      ),
+  runApp(
+    
+       MultiProvider(providers: [
+    Provider<ServiceProvider>(create: (_) => ServiceProvider()),
+    Provider<SubjectProvider>(create: (_) => SubjectProvider()),
+    ChangeNotifierProvider<AnimContainer>(create: (_) => AnimContainer()),
+    Provider<UserProvider>(create: (_) => UserProvider()),
+  ] ,child: MyApp()
       
-      loadingWidgetBuilder: (ctx, data) {
-        return Center(
-          child: SizedBox(
-            width: 40,
-            height: 40,
-            child: Container(
-              child: CircularProgressIndicator(),
-              // color: AppColors.secondaryColor,
-            ),
-          ),
-        );
-      },
-      child: MultiProvider(providers: [
-        Provider<ServiceProvider>(create: (_) => ServiceProvider()),
-        Provider<SubjectProvider>(create: (_) => SubjectProvider()),
-        ChangeNotifierProvider<AnimContainer>(create: (_) => AnimContainer()),
-        Provider<UserProvider>(create: (_) => UserProvider()),
-      ], child: MyApp())));
+      
+  ) 
+      )
+      
+      
+      
+      ;
 }
 
 Route routes(RouteSettings settings) {
@@ -220,15 +214,21 @@ Route routes(RouteSettings settings) {
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
 
-  static final navigatorKey = GlobalKey<NavigatorState>();
+  // static final navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      key:  Get.key ,
+      // key:  Get.key ,
         debugShowCheckedModeBanner: false,
+
+        locale: const Locale('ar', ''),
+      localizationsDelegates   : <LocalizationsDelegate<dynamic>>[
+          DefaultWidgetsLocalizations.delegate,
+          DefaultMaterialLocalizations.delegate,
+        ],
         title: 'Flutter Demo',
-        locale: Locale('ar'),
+        // locale: Locale('ar'),
 
 
         theme: ThemeData(
@@ -249,6 +249,36 @@ fontFamily: 'Georgia',
       // ],
         initialRoute: "/",
         onGenerateRoute: routes,
-        home: WelcomeScreen());
+        home: 
+         LoadingProvider(
+           key: RIKeys.riKey1,
+      themeData: LoadingThemeData(
+        tapDismiss: false ,
+        
+      ),
+      
+      loadingWidgetBuilder: (ctx, data) {
+        return Center(
+          child: SizedBox(
+            width: 40,
+            height: 40,
+            child: Container(
+              child: CircularProgressIndicator(),
+              // color: AppColors.secondaryColor,
+            ),
+          ),
+        );
+      },
+      child: WelcomeScreen()
+        
+         )    
+        
+        //WelcomeScreen()
+        
+        
+        
+        
+        
+        );
   }
 }

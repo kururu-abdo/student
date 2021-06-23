@@ -45,8 +45,10 @@ dependencies:
   animated_text_kit: ^4.2.1
   extended_image: ^2.0.0
   cloud_firestore: ^2.2.2
+  screenshot: ^1.2.1
   load: ^1.0.0
   flutter_svg: ^0.22.0
+  ripple_effect: ^0.1.1
   path:  
   firebase_core: "^1.0.2"
   tinycolor:

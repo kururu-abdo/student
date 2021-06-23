@@ -11,17 +11,20 @@ String localNotificationToJson(LocalNotification data) {
 }
 class LocalNotification{
   int id;
-  DateTime time;
+  int time;
+
+  String body;
   
   String title;
   
   String object;
   bool isRead;
-LocalNotification({this.id ,this.title,this.object , this.time});
+LocalNotification({this.id ,this.title,  this.body,this.object , this.time});
 
 LocalNotification.fromJson(Map<dynamic ,dynamic> data){
   this.id =  data['id'];
   this.title = data['title'];
+    this.body = data['body'];
 
   this.object =data['object'];
   this.time = data['time'];
@@ -32,7 +35,7 @@ Map<dynamic ,dynamic> toJson(){
   return {
 'id': this.id ,
 'title':this.title ,
-
+'body':   this.body,
 'object': this.object ,
 'time': this.time ,
 'isread':  this.isRead

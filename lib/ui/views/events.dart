@@ -227,7 +227,7 @@ Tab(
            Padding(
             padding: EdgeInsets.all(8.0),
             child: FutureBuilder<List<Event>>(
-             future: main_provider.getAlltEvents(),
+             future: main_provider.getAlltEvents(user_provider.getUser()),
               builder:
                   (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

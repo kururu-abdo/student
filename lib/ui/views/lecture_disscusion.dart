@@ -104,6 +104,8 @@ class _LectureDisscusionState extends State<LectureDisscusion> {
                   return ListView.builder(
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (BuildContext context, int index) {
+                      var data =  snapshot.data.docs[index]
+                                  .data() as Map<String  , dynamic>;
                       return Container(
                         margin: EdgeInsets.all(8.0),
                         padding: EdgeInsets.all(8.0),
@@ -113,13 +115,11 @@ class _LectureDisscusionState extends State<LectureDisscusion> {
                         child: Column(
                           children: [
                             ListTile(
-                              title: Text(snapshot.data.docs[index]
-                                  .data()['commentator']['name']),
-                              subtitle: Text(snapshot.data.docs[index]
-                                  .data()['commentator']['role']),
+                              title: Text(data["commentator"]['name']),
+                              subtitle: Text(data['commentator']['role']),
                             ),
                             Text(
-                              snapshot.data.docs[index].data()['comment_text'],
+                              data['comment_text'],
                               maxLines: 20,
                             ),
                             SizedBox(
@@ -127,7 +127,7 @@ class _LectureDisscusionState extends State<LectureDisscusion> {
                             ),
                             // Text(snapshot.data.docs[index].data()['time'].toString()),
                             dateFormatWidget(
-                                snapshot.data.docs[index].data()['time'])
+                               data['time'])
                           ],
                         ),
                       );

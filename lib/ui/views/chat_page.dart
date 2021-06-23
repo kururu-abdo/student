@@ -29,6 +29,8 @@ class _MyHomePageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+
+
   }
 
   @override
@@ -71,16 +73,18 @@ class _MyHomePageState extends State<ChatPage> {
                     itemCount: snapshot.data.docs.length,
                     scrollDirection: Axis.vertical,
                     itemBuilder: (BuildContext context, int index) {
+var data =  snapshot.data.docs[index]
+                                      .data()   as Map<String , dynamic>;
+
+                      
                       return Align(
-                          alignment: User.fromJson(snapshot.data.docs[index]
-                                      .data()['receiver']) ==
+                          alignment: User.fromJson(data['receiver']) ==
                                   User.fromJson(widget.me.toJson())
                               ? Alignment.topRight
                               : Alignment.topLeft,
                           child: Container(
                             decoration: BoxDecoration(
-                                color: User.fromJson(snapshot.data.docs[index]
-                                            .data()['receiver']) ==
+                                color: User.fromJson(data['receiver']) ==
                                         User.fromJson(widget.me.toJson())
                                     ? Colors.grey
                                     : Colors.purple,
@@ -89,7 +93,7 @@ class _MyHomePageState extends State<ChatPage> {
                             margin: EdgeInsets.all(10.0),
                             padding: EdgeInsets.all(10.0),
                             child: Text(
-                                snapshot.data.docs[index].data()['message']),
+                                data['message']),
                           ));
                     },
                   );
@@ -153,6 +157,13 @@ class _MyHomePageState extends State<ChatPage> {
                             curve: Curves.easeIn);
                       }),
                   hintText: 'message...'),
+onTap: (){
+  
+                        _scrollController.animateTo(
+                    _scrollController.position.maxScrollExtent,
+                    duration: Duration(milliseconds: 500),
+                    curve: Curves.easeIn);
+},
             ),
           )),
     );

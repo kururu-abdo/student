@@ -81,6 +81,8 @@ class _State extends State<ConsultComments> {
                         return ListView.builder(
                           itemCount: snapshot.data.docs.length,
                           itemBuilder: (BuildContext context, int index) {
+                            var data =  snapshot.data.docs[index]
+                                        .data() as Map<String, dynamic>;
                             return Container(
                               margin: EdgeInsets.all(8.0),
                               padding: EdgeInsets.all(8.0),
@@ -112,20 +114,17 @@ color: AppColors.primaryColor,
                                 children: [
                                   ListTile(
                                     leading: Image.asset('assets/images/user.jpg'),
-                                    title: Text(snapshot.data.docs[index]
-                                        .data()['commentator']['name']),
-                                    subtitle: Text(snapshot.data.docs[index]
-                                        .data()['commentator']['role']),
+                                    title: Text(data['commentator']['name']),
+                                    subtitle: Text(data['commentator']['role']),
                                         trailing:    dateFormatWidget(
-                                      snapshot.data.docs[index].data()['time']),
+                                      data['time']),
                                   ),
                                   SizedBox(height: 10.0,) ,
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Center(
                                       child: Text(
-                                        snapshot.data.docs[index]
-                                            .data()['comment_text'],
+                                     data['comment_text'],
                                         maxLines: 20,
                                       ),
                                     ),

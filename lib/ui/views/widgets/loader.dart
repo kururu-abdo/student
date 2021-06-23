@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class LoadingDialog extends StatelessWidget {
   static void show(BuildContext context, {Key key}) => showDialog<void>(
+    
         context: context,
         useRootNavigator: false,
         barrierDismissible: false,

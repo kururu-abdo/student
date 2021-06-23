@@ -72,16 +72,17 @@ class _MyHomePageState extends State<ChatPageNotif> {
                     itemCount: snapshot.data.docs.length,
                     scrollDirection: Axis.vertical,
                     itemBuilder: (BuildContext context, int index) {
+
+                      var data =  snapshot.data.docs[index]
+                                      .data()  as  Map<String ,dynamic>;
                       return Align(
-                          alignment: User.fromJson(snapshot.data.docs[index]
-                                      .data()['receiver']) ==
+                          alignment: User.fromJson(data['receiver']) ==
                                   User.fromJson(users.me.toJson())
                               ? Alignment.topRight
                               : Alignment.topLeft,
                           child: Container(
                             decoration: BoxDecoration(
-                                color: User.fromJson(snapshot.data.docs[index]
-                                            .data()['receiver']) ==
+                                color: User.fromJson(data['receiver']) ==
                                         User.fromJson(users.me.toJson())
                                     ? Colors.grey
                                     : Colors.purple,
@@ -90,7 +91,7 @@ class _MyHomePageState extends State<ChatPageNotif> {
                             margin: EdgeInsets.all(10.0),
                             padding: EdgeInsets.all(10.0),
                             child: Text(
-                                snapshot.data.docs[index].data()['message']),
+                                data['message']),
                           ));
                     },
                   );

@@ -174,9 +174,10 @@ class _NewConsultState extends State<NewConsult> {
                         });
 
                         var firebase_data = await data.get();
+                          var fcm_data = firebase_data as Map<String, dynamic>;
                         FCMConfig.subscripeToTopic(
-                            'consult' + firebase_data.data()['id']);
-                        debugPrint('consult' + firebase_data.data()['id']);
+                            'consult' + fcm_data['id']);
+                        debugPrint('consult' + fcm_data['id']);
 
                         future.dismiss();
 
@@ -231,9 +232,10 @@ class _NewConsultState extends State<NewConsult> {
       "time": DateTime.now().millisecondsSinceEpoch
     });
 
-    var firebase_data = await data.get();
-    FCMConfig.subscripeToTopic('consult' + firebase_data.data()['id']);
-    debugPrint('consult' + firebase_data.data()['id']);
+    var firebase_data = await data.get() ;
+    var fcm_data =  firebase_data as   Map<String, dynamic>;
+    FCMConfig.subscripeToTopic('consult' + fcm_data['id']);
+    debugPrint('consult' + fcm_data['id']);
 
     debugPrint('sending .......');
 

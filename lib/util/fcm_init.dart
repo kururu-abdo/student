@@ -8,43 +8,28 @@ import 'package:student_side/main.dart';
 import 'package:student_side/model/notification.dart';
 import 'package:student_side/util/local_datase.dart';
 
-
 class FCMConfig {
-
   FCMConfig() {
     fcmConfig();
   }
 
   static fcmConfig() async {
     debugPrint('config notfication');
-  
 
-
-await FirebaseMessaging.instance.sendMessage(to: "/topics/general" ,
-data: {
-  "title":"hi" ,
-  "body":"hmmmm" 
-} ,
-
-
-);
-
- FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-
-
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
 
       if (notification != null && android != null) {
-debugPrint('config notfication');
+        debugPrint('config notfication');
 
-      await   DBProvider.db.newNotification(
-LocalNotification(title: notification.title ,  object:json.encode(message.data) , 
-
-time: DateTime.now()
- )
-
-        );
+        var result = await DBProvider.db.newNotification(LocalNotification(
+            title: notification.title,
+            body: notification.body,
+            object: json.encode(message.data),
+            time: DateTime.now().millisecondsSinceEpoch));
+        debugPrint('/////////////////////////////');
+        debugPrint(result.toString());
         flutterLocalNotificationsPlugin.show(
             notification.hashCode,
             notification.title,
@@ -68,21 +53,19 @@ time: DateTime.now()
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-
-
-
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
 
       if (notification != null && android != null) {
         debugPrint('config notfication');
 
-        DBProvider.db.newNotification(
-          LocalNotification(
-           
+        var result = DBProvider.db.newNotification(LocalNotification(
             title: notification.title,
+            body: notification.body,
             object: json.encode(message.data),
-            time: DateTime.now()));
+            time: DateTime.now().millisecondsSinceEpoch));
+        debugPrint('/////////////////////////////');
+        debugPrint(result.toString());
         flutterLocalNotificationsPlugin.show(
             notification.hashCode,
             notification.title,
@@ -103,40 +86,32 @@ time: DateTime.now()
                 // null
                 ));
       }
-
 
       Get.toNamed('notification');
     });
 
+// RemoteMessage initialMessage =
+//         await FirebaseMessaging.instance.getInitialMessage();
 
-RemoteMessage initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
-  
-debugPrint(initialMessage?.data.toString());
+// debugPrint(initialMessage?.data.toString());
 
-    if (initialMessage?.data['type'] != 'chat') {
-   Get.toNamed('notification');
-    }      
+//     if (initialMessage?.data['type'] != 'chat') {
+//    Get.toNamed('notification');
+//     }
 
-
-
-
-
-FirebaseMessaging.onBackgroundMessage((message) async {
-
-
-
-  
+    FirebaseMessaging.onBackgroundMessage((message) async {
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
 
       if (notification != null && android != null) {
         debugPrint('config notfication');
-
-        DBProvider.db.newNotification(LocalNotification(
+        var result = await DBProvider.db.newNotification(LocalNotification(
             title: notification.title,
+            body: notification.body,
             object: json.encode(message.data),
-            time: DateTime.now()));
+            time: DateTime.now().millisecondsSinceEpoch));
+        debugPrint('/////////////////////////////');
+        debugPrint(result.runtimeType.toString());
         flutterLocalNotificationsPlugin.show(
             notification.hashCode,
             notification.title,
@@ -144,24 +119,11 @@ FirebaseMessaging.onBackgroundMessage((message) async {
             NotificationDetails(
                 AndroidNotificationDetails(
                     'channel', 'channelName', 'channelDescription'),
-                null
-                // android:
-                //  AndroidNotificationDetails(
-                //   channel.id,
-                //   channel.name,
-                //   channel.description,
-                //   // TODO add a proper drawable resource to android, for now using
-                //   //      one that already exists in example app.
-                //   icon: 'launch_background',
-                // ),
-                // null
-                ));
+                null));
       }
 
       Get.toNamed('notification');
-} );
-
-
+    });
   }
 
   static routes() {}
@@ -173,16 +135,15 @@ FirebaseMessaging.onBackgroundMessage((message) async {
   static _handleOnLaunch(Map<dynamic, dynamic> data) {}
 
   static subscripeToTopic(String topic) {
-    debugPrint('subscribe to topic'+  topic);
+    debugPrint('subscribe to topic' + topic);
     FirebaseMessaging.instance.subscribeToTopic(topic);
   }
 
   static unSubscripeToTopic(String topic) {
-
-   FirebaseMessaging.instance.unsubscribeFromTopic(topic);
+    FirebaseMessaging.instance.unsubscribeFromTopic(topic);
   }
 
   static Future<String> getToken() async {
-    return await   FirebaseMessaging.instance.getToken();
+    return await FirebaseMessaging.instance.getToken();
   }
 }

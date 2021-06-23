@@ -96,8 +96,7 @@ class _SubjectDetailsState extends State<SubjectDetails>
                   return new ListView(
                     children:
                         snapshot.data.docs.map((DocumentSnapshot document) {
-
-
+var data  =  document.data()  as Map<String, dynamic>;
 return Container(
   
 child: ListTile(
@@ -105,21 +104,10 @@ child: ListTile(
     color: Color.fromARGB(255, 255, 239, 240),
     child: Center(child: Text("001"),),
   ),
-  title: new Text(document.data()['name']),),
+  title: new Text(data['name']),),
 );
 
-                      return Container(
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (_) =>
-                                    LectureDisscusion(document.data())));
-                          },
-                          child: new ListTile(
-                            title: new Text(document.data()['name']),
-                          ),
-                        ),
-                      );
+      
                     }).toList(),
                   );
                 },

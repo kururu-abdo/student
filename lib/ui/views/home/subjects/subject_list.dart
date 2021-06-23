@@ -21,9 +21,10 @@ class SubjectList extends StatefulWidget {
 class _SubjectListState extends State<SubjectList> {
   @override
   Widget build(BuildContext context) {
-    CollectionReference subjects = FirebaseFirestore.instance.collection('subjects')
+    Query  subjects =  FirebaseFirestore.instance.collection('subjects')
     .where('dept' , isEqualTo:widget.dept.id??1)
     .where('level' , isEqualTo:widget.level.id??1)
+   
     ;
 
 
@@ -45,10 +46,10 @@ var studentProvider =  Provider.of<UserProvider>(context);
           //  return   ConsultCard(consult:document.data());
             
           return  Text(document.data().toString(),maxLines: 16,);
-            new ListTile(
-              title: new Text(document.data()['full_name']),
-              subtitle: new Text(document.data()['company']),
-            );
+            // new ListTile(
+            //   title: new Text(  document.data() ),
+            //   subtitle: new Text(document.data()['company']),
+            // );
           }).toList(),
         );
       },

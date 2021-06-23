@@ -67,10 +67,10 @@ class _TeachersState extends State<Teachers> {
                children: snapshot.data.docs.map((document) {
 
 
-
+var data = document.data() as Map<String, dynamic>;
                 return 
                  FutureBuilder<Teacher>(
-                    future: getTeacher(document.data()['teacher_id']),
+                    future: getTeacher(data['teacher_id']),
                   
                     builder: (BuildContext context, AsyncSnapshot<Teacher> snapshot) {
 
@@ -84,7 +84,7 @@ if (snapshot.connectionState==ConnectionState.waiting) {
                           child: TeacherProfile( snapshot.data)));
                     },
                     title: Text(snapshot.data.name),
-                    subtitle: Text(document.data()['name']),
+                    subtitle: Text(data['name']),
                   );
 
                     },

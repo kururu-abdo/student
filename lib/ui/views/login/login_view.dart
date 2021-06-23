@@ -12,6 +12,7 @@ import 'package:load/load.dart';
 import 'package:student_side/app/services_provider.dart';
 import 'package:student_side/ui/views/home/home_screen.dart';
 import 'package:student_side/ui/views/registeration/regiteration_screen.dart';
+import 'package:student_side/ui/views/widgets/loader.dart';
 import 'package:student_side/util/check_internet.dart';
 import 'package:student_side/util/constants.dart';
 import 'package:student_side/util/firebase_init.dart';
@@ -70,11 +71,15 @@ class _LoginViewState extends State<LoginView> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      SvgPicture.asset(
-                        'assets/images/main.svg',
-                        semanticsLabel: 'Acme Logo',
-                        height: 100,
-                      ),
+                      // SvgPicture.asset(
+                      //   'assets/images/main.svg',
+                      //   semanticsLabel: 'Acme Logo',
+                      //   height: 100,
+                      // ),
+
+                      Image.asset( 
+                        'assets/images/ic_login.png',
+                        height: 100,),
                       SizedBox(
                         height: 10,
                       ),
@@ -123,10 +128,16 @@ class _LoginViewState extends State<LoginView> {
                                         right: Radius.circular(50))),
                                 color: AppColors.secondaryColor,
                                 onPressed: () async {
+                                 
                                   if (await isConnectec()) {
+                           
                                     await tryLogin(idController.text,
                                         passwordController.text);
+
+
+                                     
                                   } else {
+                                    debugPrint("statement");
                                     Fluttertoast.showToast(
                                         msg: "تأكد من اتصال البيانات 😠",
                                         toastLength: Toast.LENGTH_SHORT,
@@ -189,7 +200,8 @@ class _LoginViewState extends State<LoginView> {
   }
 
   tryLogin(String idNumber, String password) async {
-    var future = await showLoadingDialog();
+    //var future = await showLoadingDialog();
+      LoadingDialog.show(context);
     QuerySnapshot data = await FirebaseFirestore.instance
         .collection('student')
         .where('password', isEqualTo: password)
@@ -198,13 +210,15 @@ class _LoginViewState extends State<LoginView> {
 
     if (data.size > 0) {
       print(data.docs.first.data());
-      future.dismiss();
+      //future.dismiss();
       await getStorage.write('student', json.encode(data.docs.first.data()));
+       LoadingDialog.hide(context);
       await getStorage.write('islogged', true);
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (_) => Material(child: HomeView())));
       print('login done');
     } else {
+        LoadingDialog.hide(context);
       Get.defaultDialog(
           title: 'فشل تسجيل الدخول',
           content: Text('حاول مرة أخرى'),
@@ -219,6 +233,6 @@ class _LoginViewState extends State<LoginView> {
           ]);
     }
 
-    future.dismiss();
+ //   future.dismiss();
   }
 }

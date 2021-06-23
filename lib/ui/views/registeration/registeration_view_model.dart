@@ -11,13 +11,13 @@ class RegisterationViewModel extends BaseViewModel {
   String _title = 'Home View';
   String get title => _title;
 
-  var first_name = Rx<String>();
-  var last_name = Rx<String>();
-  var id_number = Rx<String>();
-  var email = Rx<String>();
-  var password = Rx<String>();
-  var dept = Rx<Department>();
-  var level = Rx<Level>();
+  var first_name = Rx<String>("");
+  var last_name = Rx<String>("");
+  var id_number = Rx<String>("");
+  var email = Rx<String>("");
+  var password = Rx<String>("");
+  // var dept = Rx<Department>("");
+  // var level = Rx<Level>('');
 
   Future<bool> addStudent() async {}
 }

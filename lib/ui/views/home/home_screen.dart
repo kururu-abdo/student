@@ -23,6 +23,7 @@ import 'package:student_side/app/user_provider.dart';
 import 'package:student_side/model/day.dart';
 import 'package:student_side/model/department.dart';
 import 'package:student_side/model/level.dart';
+import 'package:student_side/model/notification.dart';
 import 'package:student_side/model/semester.dart';
 import 'package:student_side/model/student.dart';
 import 'package:student_side/model/subject.dart';
@@ -40,6 +41,7 @@ import 'package:student_side/ui/views/widgets/about_college.dart';
 import 'package:student_side/util/constants.dart';
 import 'package:student_side/util/fcm_init.dart';
 import 'package:student_side/ui/views/courses_page.dart';
+import 'package:student_side/util/local_datase.dart';
 import 'package:student_side/util/local_notifications.dart';
 import 'package:student_side/util/ui/app_colors.dart';
 import 'package:student_side/util/ui/notifcatin_page.dart';
@@ -65,8 +67,15 @@ class _State extends State<HomeView> {
   String email;
   Department dept;
   Level level;
+  int counter;
   @override
   void initState() {
+    DBProvider.db.getNotificationsCount().then((value) {
+      setState(() {
+        counter=value;
+      });
+    });
+ 
     super.initState();
         _pageController = PageController();
 
@@ -222,7 +231,7 @@ String getDateOfTheDay(int day) {
     var serviceProvider = Provider.of<ServiceProvider>(context);
     var subjectProvider = Provider.of<SubjectProvider>(context);
 
-    return Scaffold(
+    return   Scaffold(
       key: _scflKey,
      // backgroundColor:  Color(0xFF172277),
      //254 , 255,  255
@@ -245,22 +254,28 @@ String getDateOfTheDay(int day) {
                       height: 30,
                     ),
                     Row(
-
+    
                       children: [
+    
+                        Stack(
+                          children: [
+                            IconButton(
+                                icon: Icon(Icons.notifications), onPressed: () {
+    
+    
+    Get.to(NotificationPage({})  );
+    
+                                }),
 
-                        IconButton(
-                            icon: Icon(Icons.notifications), onPressed: () {
-
-
-Get.to(NotificationPage({})  );
-
-                            }),
-
+                                Text(counter.toString() ,  style: TextStyle(color: Colors.red),)
+                          ],
+                        ),
+    
                             
                         IconButton(
                             icon: Icon(Icons.menu_outlined), onPressed: () {
- _scflKey.currentState.openDrawer(); 
-
+     _scflKey.currentState.openDrawer(); 
+    
                             }),
                       ],
                     )
@@ -270,12 +285,12 @@ Get.to(NotificationPage({})  );
               SizedBox(
                 height: 20.0,
               ),
-
-Center(child: Text('مرحبا  ,   $name' ,   style: TextStyle(fontWeight: FontWeight.bold , fontSize: 15),)) ,
- SizedBox(
+    
+    Center(child: Text('مرحبا  ,   $name' ,   style: TextStyle(fontWeight: FontWeight.bold , fontSize: 15),)) ,
+     SizedBox(
                 height: 10.0,
               ),
-
+    
               Text(
                 'الجدول',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
@@ -307,24 +322,24 @@ Center(child: Text('مرحبا  ,   $name' ,   style: TextStyle(fontWeight: Font
                   physics: BouncingScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
                  
-
-
+    
+    
                     // if (isToday(days[index].id)) {
                     //   selectedDay=days[index];
                     // }
-
+    
                     
                     return InkWell(
                       onTap: () async{
                                                                           selectedDay = DAYS[index];
-
+    
                         setState(() {
                                                   selectedDay = DAYS[index];
-isShow=true;
+    isShow=true;
                         });
-
-
-await serviceProvider.getTimeTable(studentProvider.getUser(), selectedDay);
+    
+    
+    await serviceProvider.getTimeTable(studentProvider.getUser(), selectedDay);
                       },
                       child: Container(
                         width: 60,
@@ -332,14 +347,14 @@ await serviceProvider.getTimeTable(studentProvider.getUser(), selectedDay);
                         margin: 
               EdgeInsets.all(5.0),
                         decoration: BoxDecoration(
-
+    
                           color:  generateRandomColor1()  ,
                           borderRadius: BorderRadius.vertical(
-top: Radius.circular(15) ,
-
-bottom: Radius.circular(15) ,
-
-
+    top: Radius.circular(15) ,
+    
+    bottom: Radius.circular(15) ,
+    
+    
                           )
                         ),
                         child: Padding(
@@ -373,16 +388,16 @@ bottom: Radius.circular(15) ,
                 ),
               ),
               Visibility(visible: isShow, child: Container(
-   height: MediaQuery.of(context).size.height/3 ,
-
-
-   child: FutureBuilder<List<Map>>(
+     height: MediaQuery.of(context).size.height/3 ,
+    
+    
+     child: FutureBuilder<List<Map>>(
      future: serviceProvider.getTimeTable(studentProvider.getUser(), selectedDay),
      builder: (BuildContext context, AsyncSnapshot<List<Map>> snapshot) {
-
-if (snapshot.connectionState ==ConnectionState.done) {
-if (snapshot.hasData  &&  snapshot.data.length>0) {
-  return  ListView.builder(
+    
+    if (snapshot.connectionState ==ConnectionState.done) {
+    if (snapshot.hasData  &&  snapshot.data.length>0) {
+    return  ListView.builder(
     itemCount: snapshot.data.length,
     itemBuilder: (BuildContext context, int index) {
     return   Card(
@@ -390,28 +405,28 @@ if (snapshot.hasData  &&  snapshot.data.length>0) {
       subtitle: Row(children: [
         Text(
                                           snapshot.data[index]['from']) ,
- Text("---"),
-
- Text(snapshot.data[index]['to']),
-
-
+     Text("---"),
+    
+     Text(snapshot.data[index]['to']),
+    
+    
       ],),
       leading: Image.asset('assets/images/subject.png'),
-trailing: Text(snapshot.data[index]['hall'] ,   overflow: TextOverflow.ellipsis,) ,      
+    trailing: Text(snapshot.data[index]['hall'] ,   overflow: TextOverflow.ellipsis,) ,      
          ),
     ) ; 
-   },
-  );
-} 
-return  Center(
+     },
+    );
+    } 
+    return  Center(
                           child: Text('لا توجد محاضرات في هذا اليوم '),
                         );
-}
-return Center(child: CircularProgressIndicator(),);
-
+    }
+    return Center(child: CircularProgressIndicator(),);
+    
      },
-   ),
-
+     ),
+    
               )),
               SizedBox(
                 height: 20.0,
@@ -426,18 +441,18 @@ return Center(child: CircularProgressIndicator(),);
                             fontSize: 20.0, fontWeight: FontWeight.bold)),
                     InkWell(
                       onTap: () {
-
-Navigator.of(context).push(
- PageTransition(
+    
+    Navigator.of(context).push(
+     PageTransition(
                           type: PageTransitionType.fade, child: Subjects(
                             student: studentProvider.getUser(),
                           ))
-
-
-);
-
-
-
+    
+    
+    );
+    
+    
+    
                       },
                       child: Text('رؤية كل المواد',
                           style: TextStyle(
@@ -458,7 +473,7 @@ Navigator.of(context).push(
                   builder: (BuildContext context, AsyncSnapshot<List<ClassSubject>> snapshot) {
                     if (!snapshot.hasData) {
                       return Center(
-
+    
                         child: CircularProgressIndicator(),
                       );
                     }

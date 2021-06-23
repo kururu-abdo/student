@@ -61,12 +61,12 @@ CollectionReference users = FirebaseFirestore.instance.collection('student');
   
   }
 
- Future<List<Event>> getAlltEvents() async {
+ Future<List<Event>> getAlltEvents(Student student) async {
    
       QuerySnapshot data = await FirebaseFirestore.instance
           .collection('events')
-          .where('level', isEqualTo:null)
-            .where('dept', isEqualTo: null )
+        
+            .where('dept', isEqualTo: student.department.toJson() )
           .get();
       List<Event> evnt =
           data.docs.map((e) => Event.fromJson(e.data())).toList();
@@ -84,6 +84,7 @@ CollectionReference users = FirebaseFirestore.instance.collection('student');
       QuerySnapshot data = await FirebaseFirestore.instance
           .collection('events')
           .where('level', isEqualTo: student.level.toJson())
+          .where('dept' ,   isEqualTo: student.department.toJson())
           .get();
       List<Event> evnt =
           data.docs.map((e) => Event.fromJson(e.data())).toList();
@@ -125,7 +126,7 @@ CollectionReference users = FirebaseFirestore.instance.collection('student');
         .where('dept', isEqualTo: student.department.toJson())
         .where('level', isEqualTo: student.level.toJson())
          .where('semester', isEqualTo: student.semester.toJson())
-                .where('day', isEqualTo: day)
+          .where('day', isEqualTo: day)
 
         .get();
 List<Map>  ls=[];
