@@ -33,7 +33,8 @@ dependencies:
   sqflite:
   auto_size_text: ^2.1.0
   animations:
-  uuid: ^2.0.4
+  uuid: 
+  flutter_keyboard_visibility:  
   flutter_speed_dial: ^3.0.5
   http: ^0.12.1 
   url_launcher: ^6.0.2
@@ -43,23 +44,22 @@ dependencies:
   webview_flutter: ^2.0.2    
   firebase_messaging: ^10.0.2
   animated_text_kit: ^4.2.1
-  extended_image: ^2.0.0
   cloud_firestore: ^2.2.2
   screenshot: ^1.2.1
   load: ^1.0.0
-  flutter_svg: ^0.22.0
   ripple_effect: ^0.1.1
   path:  
   firebase_core: "^1.0.2"
   tinycolor:
-  form_bloc: ^0.19.0
-  flutter_form_bloc: ^0.19.0
-  flutter_bloc:  ^6.0.0
+  bloc: ^7.0.0
+
+  form_bloc: ^0.20.4
+  flutter_form_bloc: ^0.20.4
+  flutter_bloc: 
   rxdart:
   backendless_sdk: ^6.0.2
   injectable:
   nice_intro: ^0.1.4
-  flutter_keyboard_visibility: ^3.0.0
   stacked_services:
   auto_route:
   percent_indicator: ^3.0.1
@@ -73,7 +73,11 @@ dependencies:
   open_file: ^3.2.1  
   flutter_pdfview: ^1.1.0
   flutter_filereader: ^2.2.0
-
+  flutter_file_preview:
+    git:
+        url: git://github.com/aliyoge/flutter_file_preview.git
+  flutter_show_more: ^0.1.2
+      
   get:
   carousel_slider: ^3.0.0
   
@@ -82,9 +86,21 @@ dependencies:
   flutter_conditional_rendering: ^2.0.0
   get_storage:
 dev_dependencies:
-  # flutter_test:
-  #   sdk: flutter
-
+  flutter_native_splash: 
+    
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: 
+flutter_icons:
+  android: "launcher_icon" 
+  ios: false
+  image_path: "assets/images/karari.png"  
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+flutter_native_splash:
+  image: assets/images/karari.png
+  color: "ffffff"
+  fullscreen: true
   build_runner:
   auto_route_generator:  
 

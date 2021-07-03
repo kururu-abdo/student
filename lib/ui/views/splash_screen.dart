@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:nice_intro/intro_screen.dart';
 import 'package:nice_intro/intro_screens.dart';
 import 'package:student_side/ui/views/auth_page.dart';
 import 'package:student_side/ui/views/login/login_view.dart';
+import 'package:student_side/ui/views/login_page.dart';
+import 'package:student_side/util/ui/app_colors.dart';
 import 'package:tinycolor/tinycolor.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -44,8 +47,8 @@ class _SplashScreenState extends State<SplashScreen> {
           builder: (context) => LoginView(),
         ),
       ),
-      onSkip: () => print('Skipping the intro slides'),
-      footerBgColor: TinyColor(Colors.blue).lighten().color,
+      onSkip: () =>Get.to(LoginView()),
+      footerBgColor: AppColors.greenColor,
       activeDotColor: Colors.white,
       footerRadius: 18.0,
       indicatorType: IndicatorType.CIRCLE,

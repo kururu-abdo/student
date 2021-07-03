@@ -37,7 +37,7 @@ class _State extends State<WelcomeScreen>{
        return Container(
          color: Colors.white,
                 child: Center(
-    child: Image.asset('assets/images/user.jpg' ,
+    child: Image.asset('assets/images/karari.png' ,
     
     width:  250 ,
     height: 250 ,

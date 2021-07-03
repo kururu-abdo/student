@@ -52,53 +52,9 @@ class _SubjectsState extends State<Subjects> {
         backgroundColor: AppColors.primaryColor,
         elevation: 0.0,
         centerTitle: true,
-        title: Conditional.single(
-          context: context,
-          conditionBuilder: (BuildContext context) => isSearch,
-          widgetBuilder: (BuildContext context) => TypeAheadField(
-            textFieldConfiguration: TextFieldConfiguration(
-              autofocus: true,
-              // style: DefaultTextStyle.of(context).style.copyWith(
-              //   fontStyle: FontStyle.italic
-              // ),
-              // decoration: InputDecoration(
-              //   border: OutlineInputBorder()
-              // )
-            ),
-            suggestionsCallback: (pattern) async {
-              // return await BackendService.getSuggestions(pattern);
-            },
-            itemBuilder: (context, suggestion) {
-              return ListTile(
-                leading: Icon(Icons.shopping_cart),
-                title: Text('dffd'),
-                subtitle: Text('\$${suggestion['price']}'),
-              );
-            },
-            onSuggestionSelected: (suggestion) {
-              // Navigator.of(context).push(MaterialPageRoute(
-              //   builder: (context) => ProductPage(product: suggestion)
-              // ));
-            },
-          ),
-          fallbackBuilder: (BuildContext context) => Spacer(),
-        ),
-        actions: [
-          IconButton(
-              icon: Icon(
-                Icons.search_outlined,
-                color: Colors.black,
-              ),
-              onPressed: () {
-                setState(() {
-                  if (isSearch == true) {
-                    isSearch = false;
-                  } else {
-                    isSearch = true;
-                  }
-                });
-              })
-        ],
+        title:
+        
+       Text ("المواد")
       ),
       body: Padding(
         padding: EdgeInsets.all(20.0),

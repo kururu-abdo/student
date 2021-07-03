@@ -21,6 +21,7 @@ import 'package:student_side/model/chat_user.dart';
 import 'package:student_side/model/consult.dart';
 import 'package:student_side/model/notification.dart';
 import 'package:student_side/model/subject.dart';
+import 'package:student_side/ui/views/chat_page.dart';
 import 'package:student_side/ui/views/home/consults/comments.dart';
 import 'package:student_side/ui/views/home/consults/consults.dart';
 import 'package:student_side/ui/views/home/home_screen.dart';
@@ -76,28 +77,28 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
             ));
   }
 
-  if (message.data['screen'] == 'consults') {
-    Get.toNamed('/consults');
-  } else if (message.data['screen'] == 'consultcomments') {
-    Map data = message.data['data'];
+  // if (message.data['screen'] == 'consults') {
+  //   Get.toNamed('/consults');
+  // } else if (message.data['screen'] == 'consultcomments') {
+  //   Map data = message.data['data'];
 
-    Get.toNamed('/consultcomments', arguments: Consult.fromJson(data));
-  } else if (message.data['screen'] == 'chat') {
-    var user = User.fromJson(message.data['data']['sender']);
+  //   Get.toNamed('/consultcomments', arguments: Consult.fromJson(data));
+  // } else if (message.data['screen'] == 'chat') {
+  //   var user = User.fromJson(message.data['data']['sender']);
 
-    var me = User.fromJson(message.data['data']['receiver']);
+  //   var me = User.fromJson(message.data['data']['receiver']);
 
-    Get.toNamed('/chat', arguments: ChatPageArgs(me, user));
-  } else if (message.data['screen'] == 'lecture' ||
-      message.data['screen'] == 'event') {
-    Get.toNamed('/subject');
-  } else if (message.data['screen'] == 'lecturedetails') {
-    Get.toNamed('/consultcomments');
-  } else if (message.data['screen'] == 'eventdetails') {
-    Get.toNamed('/consultcomments');
-  } else {
-    Get.toNamed('/');
-  }
+  //   Get.toNamed('/chat', arguments: ChatPageArgs(me, user));
+  // } else if (message.data['screen'] == 'lecture' ||
+  //     message.data['screen'] == 'event') {
+  //   Get.toNamed('/subject');
+  // } else if (message.data['screen'] == 'lecturedetails') {
+  //   Get.toNamed('/consultcomments');
+  // } else if (message.data['screen'] == 'eventdetails') {
+  //   Get.toNamed('/consultcomments');
+  // } else {
+  //   Get.toNamed('/');
+  // }
 }
 
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
@@ -136,34 +137,38 @@ void main() async {
   await Firebase.initializeApp();
   await GetStorage.init();
   await FlutterDownloader.initialize();
-
+  FlutterDownloader.registerCallback(TestClass.callback);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+final NotificationAppLaunchDetails notificationAppLaunchDetails =
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
-// if (!kIsWeb) {
-//     channel = const AndroidNotificationChannel(
-//       'high_importance_channel', // id
-//       'High Importance Notifications', // title
-//       'This channel is used for important notifications.', // description
-//       importance: Importance.High,
-//     );
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('app_icon');
 
-
-    /// Create an Android Notification Channel.
-    ///
-    /// We use this channel in the `AndroidManifest.xml` file to override the
-    /// default FCM channel to enable heads up notifications.
-    // await flutterLocalNotificationsPlugin
-    //     .pendingNotificationRequests<AndroidFlutterLocalNotificationsPlugin>()
-    //     ?.createNotificationChannel(channel);
-
-
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
+  final InitializationSettings initializationSettings = InitializationSettings(
+ initializationSettingsAndroid,  null
   );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    var data = json.decode(payload);
 
+    if (data['type'] == "message") {
+      var me = User.fromJson(data['receiver']);
+      var user = User.fromJson(data['sender']);
+      Get.to(ChatPage(
+        me: me,
+        user: user,
+      ));
+    } else {
+      if (data['type'] == "event") {
+        // Get.to(EventComments(data['id']));
+      }
+      // Get.to(LectureComments(data['id']));
+    }
+
+    debugPrint('notification payload: $payload');
+  });
   runApp(
     
        MultiProvider(providers: [
@@ -231,18 +236,16 @@ class MyApp extends StatelessWidget {
         // locale: Locale('ar'),
 
 
-        theme: ThemeData(
+        theme: ThemeData.from(colorScheme: ColorScheme.light(
 
-backgroundColor: Color(0xFF172277) ,
-          primaryColor:  Color(0xFF172277),
-fontFamily: 'Georgia',
-          colorScheme: ColorScheme.light(
-            background: Color(0xFF172277) ,
-            onBackground: Colors.white ,
+primary: AppColors.greenColor ,
+onPrimary: Colors.white,
+secondary: Colors.green[200] ,
+onSecondary: Colors.black ,
+background: Colors.white ,
+onBackground: Colors.black
 
-            primary: Color(0xFF172277)
-          )
-        ),
+        )),
       //   delegates: <LocalizationsDelegate<dynamic>>[
       //   DefaultWidgetsLocalizations.delegate,
       //   DefaultMaterialLocalizations.delegate,
@@ -281,4 +284,7 @@ fontFamily: 'Georgia',
         
         );
   }
+}
+class TestClass {
+  static void callback(String id, DownloadTaskStatus status, int progress) {}
 }

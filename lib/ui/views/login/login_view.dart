@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -78,7 +77,7 @@ class _LoginViewState extends State<LoginView> {
                       // ),
 
                       Image.asset( 
-                        'assets/images/ic_login.png',
+                        'assets/images/ic_login_green.png',
                         height: 100,),
                       SizedBox(
                         height: 10,
@@ -126,7 +125,7 @@ class _LoginViewState extends State<LoginView> {
                                     borderRadius: BorderRadius.horizontal(
                                         left: Radius.circular(50),
                                         right: Radius.circular(50))),
-                                color: AppColors.secondaryColor,
+                                color: AppColors.greenColor,
                                 onPressed: () async {
                                  
                                   if (await isConnectec()) {
@@ -153,7 +152,7 @@ class _LoginViewState extends State<LoginView> {
                                     'دخول',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.primaryColor),
+                                        color:Colors.white),
                                   ),
                                 )),
                           ],
@@ -168,7 +167,7 @@ class _LoginViewState extends State<LoginView> {
                             Text(
                               'ليس لديك حساب؟',
                               style: TextStyle(
-                                  color: Color.fromARGB(255, 190, 184, 252),
+                                  color: AppColors.greenColor,
                                   fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
@@ -183,7 +182,7 @@ class _LoginViewState extends State<LoginView> {
                               },
                               child: Text('قم بالتسجيل ',
                                   style: TextStyle(
-                                      color: AppColors.secondaryColor,
+                                      color: AppColors.greenColor,
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.bold)),
                             )

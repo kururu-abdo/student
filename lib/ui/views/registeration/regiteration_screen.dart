@@ -44,7 +44,6 @@ class _State extends State<RegisterationView> {
   List<Semester> semesters = [];
   Semester semester;
   fetch_semesters() async {
-    var future = await showLoadingDialog();
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -59,11 +58,9 @@ class _State extends State<RegisterationView> {
       semesters = I.map((e) => Semester.fromJson(e.data())).toList();
     });
 
-    future.dismiss();
   }
 
   fetch_depts() async {
-    var future = await showLoadingDialog();
 
     Backendless.data.of("department").find().then((department) {
       print(department);
@@ -73,11 +70,9 @@ class _State extends State<RegisterationView> {
       });
     });
 
-    future.dismiss();
   }
 
   fetch_levels() async {
-    var future = await showLoadingDialog();
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -108,7 +103,6 @@ class _State extends State<RegisterationView> {
 
 //   });
 
-    future.dismiss();
   }
 
   @override
@@ -117,10 +111,12 @@ class _State extends State<RegisterationView> {
 
     BackendlessServer();
     FirebaseInit.initFirebase();
-    fetch_levels();
-    fetch_semesters();
+   
 //fetch_depts();
     getDepts();
+
+     fetch_levels();
+    fetch_semesters();
   }
 
   getDepts() async {
@@ -346,7 +342,7 @@ class _State extends State<RegisterationView> {
                               borderRadius: BorderRadius.horizontal(
                                   left: Radius.circular(50),
                                   right: Radius.circular(50))),
-                          color: TinyColor(Colors.blue).lighten().color,
+                          color: AppColors.greenColor,
                           onPressed: () async {
                             final valid = await usernameCheck();
                             if (!valid) {

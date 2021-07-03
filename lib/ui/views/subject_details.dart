@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:student_side/model/subject.dart';
 import 'package:student_side/ui/views/event_details.dart';
 import 'package:student_side/ui/views/lecture_disscusion.dart';
-import 'package:extended_image/extended_image.dart';
 
 class SubjectDetails extends StatefulWidget {
   final ClassSubject subject;
   SubjectDetails(this.subject);
+
 
   @override
   _SubjectDetailsState createState() => _SubjectDetailsState();

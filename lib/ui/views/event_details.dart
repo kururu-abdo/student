@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:student_side/app/user_provider.dart';
 import 'package:student_side/model/teacher.dart';
 import 'package:student_side/util/constants.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:student_side/util/days.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
@@ -68,25 +67,11 @@ class _LectureDisscusionState extends State<EventDeitals> {
                                       (BuildContext context, int index) {
                                     debugPrint(widget.data['files'][index]);
                                     return
-                                        //     Container(
-                                        //       width:100,
-                                        // height: 100,
-                                        //       child: Image.network(widget.data['files'][index]));
-                                        ExtendedImage.network(
-                                      // 'https://photo.tuchong.com/4870004/f/298584322.jpg',
-                                      widget.data['files'][index],
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.fill,
-                                      cache: true,
-                                      border: Border.all(
-                                          color: Colors.red, width: 1.0),
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(30.0)),
-
-                                      //cancelToken: cancellationToken,
-                                    );
+                                            Container(
+                                              width:100,
+                                        height: 100,
+                                              child: Image.network(widget.data['files'][index]));
+                                    
                                   },
                                 ),
                               )
