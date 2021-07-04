@@ -166,7 +166,8 @@ if(formattedDate == formattedToday) {
         ),
         // Center(child:Text(widget.consult['student']['id_number']??'')) ,
                             dateFormatWidget(widget.consult['time'] != null?
-                            widget.consult['time']:DateTime.now()
+                            widget.consult['time']:  Timestamp.fromDate(    DateTime.now())
+                        
                             
                             )
 
