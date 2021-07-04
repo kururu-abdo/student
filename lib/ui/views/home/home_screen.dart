@@ -38,6 +38,7 @@ import 'package:student_side/ui/views/teachers.dart';
 import 'package:student_side/ui/views/website.dart';
 import 'package:student_side/ui/views/welcome_screen.dart';
 import 'package:student_side/ui/views/widgets/about_college.dart';
+import 'package:student_side/ui/views/widgets/loader.dart';
 import 'package:student_side/util/constants.dart';
 import 'package:student_side/util/fcm_init.dart';
 import 'package:student_side/ui/views/courses_page.dart';
@@ -103,7 +104,7 @@ setState(() {
 
   List subjects = [];
   fetch_subjects() async {
-    var future = await showLoadingDialog();
+                           LoadingDialog.show(context);
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -121,7 +122,7 @@ setState(() {
       // semsters =   I.map((e) => Semester.fromJson(e.data()) ).toList();
     });
 
-    future.dismiss();
+                           LoadingDialog.show(context);
   }
 
   subscribe() {
@@ -143,7 +144,7 @@ setState(() {
   int _currentIndex = 0;
   PageController _pageController;
   fetch_semesters() async {
-    var future = await showLoadingDialog();
+                           LoadingDialog.show(context);
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -158,7 +159,7 @@ setState(() {
       semsters = I.map((e) => Semester.fromJson(e.data())).toList();
     });
 
-    future.dismiss();
+                           LoadingDialog.hide(context);
   }
 
   fetchStudnet() async {
@@ -188,7 +189,8 @@ bool isToday(int index){
 }
 
 getDaysOfWeek() async {
-      var future = await showLoadingDialog();
+                                 LoadingDialog.show(context);
+
  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     var days = firestore.collection('days');
@@ -202,7 +204,8 @@ getDaysOfWeek() async {
       this.days = I.map((e) => Day.fromJson(e.data())).toList();
     });
 
-    future.dismiss();
+                             LoadingDialog.hide(context);
+
 }
 
 String getDateOfTheDay(int day) {

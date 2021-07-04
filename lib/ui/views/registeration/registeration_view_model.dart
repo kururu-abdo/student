@@ -6,6 +6,7 @@ import 'package:stacked/stacked.dart';
 import 'package:student_side/model/department.dart';
 import 'package:student_side/model/level.dart';
 import 'package:form_bloc/form_bloc.dart';
+import 'package:student_side/ui/views/widgets/loader.dart';
 
 class RegisterationViewModel extends BaseViewModel {
   String _title = 'Home View';
@@ -58,8 +59,9 @@ class RegistertionFormBloc extends FormBloc<String, String> {
     }
   }
 
-  Future<List<Level>> fetch_levels() async {
-    var future = await showLoadingDialog();
+  Future<List<Level>> fetch_levels(BuildContext context) async {
+                               LoadingDialog.show(context);
+
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -75,7 +77,8 @@ class RegistertionFormBloc extends FormBloc<String, String> {
       print(item.data());
     }
 
-    future.dismiss();
+                                   LoadingDialog.hide(context);
+
 
     return levels;
   }

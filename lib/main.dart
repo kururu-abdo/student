@@ -163,7 +163,7 @@ final NotificationAppLaunchDetails notificationAppLaunchDetails =
     } else {
       if (data['type'] == "event") {
         // Get.to(EventComments(data['id']));
-      }
+      }  
       // Get.to(LectureComments(data['id']));
     }
 
@@ -252,6 +252,7 @@ onBackground: Colors.black
       // ],
         initialRoute: "/",
         onGenerateRoute: routes,
+
         home: 
          LoadingProvider(
            key: RIKeys.riKey1,

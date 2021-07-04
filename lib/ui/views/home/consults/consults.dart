@@ -53,6 +53,14 @@ setState(() {
       return SafeArea(
         child: Scaffold(
          appBar: AppBar(
+actions: [
+TextButton(onPressed: (){
+Get.to(MyConsults());
+}, child: Text("استفساراتي" ,  style:TextStyle(fontWeight: FontWeight.bold) ,))  
+],
+
+
+
   backgroundColor: AppColors.primaryColor,
   elevation: 0.0,
             title: Text('الاستفسارات' ,  style: TextStyle(color: Colors.black),),
@@ -105,7 +113,7 @@ setState(() {
             onClose: () => print('DIAL CLOSED'),
             tooltip: 'Speed Dial',
             heroTag: 'speed-dial-hero-tag',
-            backgroundColor: Color.fromARGB(255, 249,170,51),
+            backgroundColor: AppColors.greenColor,
             foregroundColor: Colors.black,
             elevation: 8.0,
             shape: CircleBorder(),
@@ -130,5 +138,125 @@ setState(() {
 
 
       );
+  }
+}
+
+
+
+class MyConsults extends StatefulWidget {
+  MyConsults({Key key}) : super(key: key);
+
+  @override
+  _MyConsultsState createState() => _MyConsultsState();
+}
+
+class _MyConsultsState extends State<MyConsults> {
+  static const String id = '/myconsults';
+  @override
+  void initState() {
+    super.initState();
+    FirebaseInit.initFirebase();
+
+    student();
+  }
+  Department department;
+  Student me;
+  Level level;
+  student() async {
+    var data = getStorage.read('student');
+    Student student = Student.fromJson(json.decode(data));
+    setState(() {
+      this.department = student.department;
+      this.level = student.level;
+      this.me   = student;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Query consults = FirebaseFirestore.instance
+        .collection('consults')
+                 .where('student', isEqualTo: this.me.toJson());
+
+        // .where('dept', isEqualTo: this.department.toJson());
+        // .where('level', isEqualTo: this.level.toJson());
+
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          
+          backgroundColor: AppColors.primaryColor,
+          elevation: 0.0,
+          title: Text(
+            'استفساراتي',
+            style: TextStyle(color: Colors.black),
+          ),
+          centerTitle: true,
+          leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+        ),
+        body: StreamBuilder<QuerySnapshot>(
+          stream: consults.snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              print(snapshot.error);
+              return Text('Something went wrong');
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            }
+
+            return new ListView(
+              children: snapshot.data.docs.map((DocumentSnapshot document) {
+                return ConsultCard(consult: document.data());
+              }).toList(),
+            );
+          },
+        ),
+        floatingActionButton: SpeedDial(
+
+            /// both default to 16
+            marginEnd: 18,
+            marginBottom: 20,
+            icon: Icons.add,
+            activeIcon: Icons.remove,
+            buttonSize: 56.0,
+            visible: true,
+            closeManually: false,
+            renderOverlay: false,
+            curve: Curves.bounceIn,
+            overlayColor: Colors.black,
+            overlayOpacity: 0.5,
+            onOpen: () => print('OPENING DIAL'),
+            onClose: () => print('DIAL CLOSED'),
+            tooltip: 'Speed Dial',
+            heroTag: 'speed-dial-hero-tag',
+            backgroundColor: AppColors.greenColor,
+            foregroundColor: Colors.black,
+            elevation: 8.0,
+            shape: CircleBorder(),
+            children: [
+              SpeedDialChild(
+                child: Icon(Icons.question_answer),
+                backgroundColor: Colors.black,
+                label: 'اضافة استفسار',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: () =>
+                    Navigator.of(context).push(HeroDialogRoute(builder: (_) {
+                  return NewConsult();
+                })),
+                onLongPress: () => print('FIRST CHILD LONG PRESS'),
+              ),
+            ]),
+      ),
+    );
   }
 }

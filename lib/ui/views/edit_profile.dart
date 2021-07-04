@@ -9,6 +9,7 @@ import 'package:student_side/app/services_provider.dart';
 import 'package:student_side/app/user_provider.dart';
 import 'package:student_side/model/level.dart';
 import 'package:student_side/model/semester.dart';
+import 'package:student_side/ui/views/widgets/loader.dart';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -141,7 +142,7 @@ class _EditProfileState extends State<EditProfile> {
                         child: const Text('تحديث'),
                         onPressed: () async {
                           if (await serviceProvider.checkInternet()) {
-                            var future = await showLoadingDialog();
+                           LoadingDialog.show(context);
                             var student = studentProvider.getUser();
 
                             student.semester = this.semester != null
@@ -181,7 +182,8 @@ class _EditProfileState extends State<EditProfile> {
                                 textColor: Colors.white,
                                 fontSize: 16.0);
 
-                            future.dismiss();
+                                                    LoadingDialog.hide(context);
+
                           } else {
                             Fluttertoast.showToast(
                                 msg: "تأكد من أتصالك بالانترنت ^_^",

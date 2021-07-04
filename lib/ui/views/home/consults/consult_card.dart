@@ -1,10 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_show_more/flutter_show_more.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:student_side/model/consult.dart';
 import 'package:student_side/ui/views/home/consults/comments.dart';
+import 'package:student_side/util/ui/app_colors.dart';
 
 class ConsultCard extends StatefulWidget {
   final Map consult;
@@ -62,17 +64,70 @@ class _ConsultCardState extends State<ConsultCard> {
         // decoration: BoxDecoration(
         //    color: Colors.grey,
         // ),
-        child: Text(
-          widget.consult['consult'] ?? '',
-          maxLines: 16,
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
-        ),
+        child:
+        
+        ShowMoreText(
+            widget.consult['consult'] ?? '',
+
+  maxLength: 100,
+  style: TextStyle(fontSize: 12, color: Colors.black),
+  showMoreText: 'عرض اكثر',
+  showMoreStyle: TextStyle(
+  fontSize: 12,
+    fontWeight: FontWeight.bold,
+    color: AppColors.greenColor,
+  ),
+  shouldShowLessText: true,
+  showLessText: ' عرض اقل',
+)
+        
+        
+        //  Text(
+        //   widget.consult['consult'] ?? '',
+        //   maxLines: 16,
+        //   style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+        // ),
       ),
     ]);
   }
+  Widget dateFormatWidget(Timestamp timestamp) {
+    DateTime date = timestamp.toDate();
+    // var now = DateTime.now();
+    // var nowDay = now.weekday;
+    // var day = date.weekday;
 
+    var format = new DateFormat('d MMM, hh:mm a');
+    // var date = new DateTime.fromMillisecondsSinceEpoch(t);
+    var formattedDate = DateFormat.yMMMd().format(date); // Apr 8, 2020
+
+    var now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    var formattedToday = DateFormat.yMMMd().format(today);
+
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    var formattedYesterDay = DateFormat.yMMMd().format(yesterday);
+
+    String time = '';
+
+    if (formattedDate == formattedToday) {
+      time = "اليوم";
+    } else if (formattedDate == formattedYesterDay) {
+      time = "الأمس";
+    } else {
+      time = formattedDate;
+    }
+
+    return Container(
+      child: Text(time),
+    );
+    // print(day);
+    // print(Days.values[Days.values[day].index]   );
+    // return Container(
+    //   child: Text(getDayText(nowDay, day)),
+    // );
+  }
   String timeWidgetText(int t) {
- var format = new DateFormat('d MMM, hh:mm a');
+ var format = new DateFormat('d MMM, hh:mm');
     var date = new DateTime.fromMillisecondsSinceEpoch(t );
 var formattedDate = DateFormat.yMMMd().format(date); // Apr 8, 2020
 
@@ -110,10 +165,14 @@ if(formattedDate == formattedToday) {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         // Center(child:Text(widget.consult['student']['id_number']??'')) ,
+                            dateFormatWidget(widget.consult['time'] != null?
+                            widget.consult['time']:0
+                            
+                            )
 
-        Text(widget.consult['time'] != null
-            ? timeWidgetText(widget.consult['time'] ).toString()
-            : '')
+        // Text(widget.consult['time'] != null
+        //     ? timeWidgetText(widget.consult['time'] ).toString()
+        //     : '')
       ],
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     );

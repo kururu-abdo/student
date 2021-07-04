@@ -47,7 +47,7 @@ CollectionReference users = FirebaseFirestore.instance.collection('student');
  
       QuerySnapshot data = await FirebaseFirestore.instance
           .collection('events')
-            .where('level', isEqualTo: student.level.toJson())
+            .where('dept', isEqualTo: student.department.toJson())
          
           .get();
       List<Event> evnt =

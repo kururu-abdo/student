@@ -8,11 +8,13 @@ import 'package:student_side/app/user_provider.dart';
 import 'package:student_side/model/department.dart';
 import 'package:student_side/model/level.dart';
 import 'package:student_side/model/student.dart';
+import 'package:student_side/ui/views/widgets/loader.dart';
 import 'package:student_side/util/backendless_setup.dart';
 import 'package:student_side/util/constants.dart';
 import 'package:student_side/util/fcm_init.dart';
 import 'package:student_side/util/firebase_init.dart';
 import 'package:provider/provider.dart';
+import 'package:student_side/util/ui/app_colors.dart';
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
 
@@ -32,7 +34,7 @@ class _NewConsultState extends State<NewConsult> {
   TextEditingController controller = new TextEditingController();
 
   fetch_levels() async {
-    var future = await showLoadingDialog();
+                           LoadingDialog.show(context);
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -51,7 +53,7 @@ class _NewConsultState extends State<NewConsult> {
       print(item.data());
     }
 
-    future.dismiss();
+                           LoadingDialog.hide(context);
   }
 
   @override
@@ -155,9 +157,9 @@ class _NewConsultState extends State<NewConsult> {
                 children: [
                   MaterialButton(
                       onPressed: () async {
+                        LoadingDialog.show(context);
                         CollectionReference consult =
                             FirebaseFirestore.instance.collection('consults');
-                        var future = await showLoadingDialog();
                         var uuid = Uuid(options: {'grng': UuidUtil.cryptoRNG});
                         DocumentReference data = await consult.add({
                           'id': uuid.v1(),
@@ -170,21 +172,23 @@ class _NewConsultState extends State<NewConsult> {
                           'level':
                               studentProvider.getUser().level.toJson(), // 42 ,
                           "consult": controller.text,
-                          "time": DateTime.now().millisecondsSinceEpoch
+                          "time": DateTime.now()
                         });
 
                         var firebase_data = await data.get();
-                          var fcm_data = firebase_data as Map<String, dynamic>;
+                          var fcm_data = firebase_data;
                         FCMConfig.subscripeToTopic(
                             'consult' + fcm_data['id']);
                         debugPrint('consult' + fcm_data['id']);
 
-                        future.dismiss();
+                        LoadingDialog.hide(context);
 
                         Get.back();
                       },
-                      child: Text('نشر' , style: TextStyle(fontWeight: FontWeight.bold),),
-                      color: Color.fromARGB(255, 93, 43, 255),
+                      child: Text('نشر' , style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),),
+                      color: AppColors.greenColor,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                           // side: BorderSide(color: Colors.red)
@@ -202,7 +206,7 @@ class _NewConsultState extends State<NewConsult> {
                         'إلغاء',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      color: Color.fromARGB(255, 255, 255, 255),
+                      color: Colors.red,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         // side: BorderSide(color: Colors.red)
@@ -221,7 +225,10 @@ class _NewConsultState extends State<NewConsult> {
 
     CollectionReference consult =
         FirebaseFirestore.instance.collection('consults');
-    var future = await showLoadingDialog();
+
+
+LoadingDialog.show(context);
+
     var uuid = Uuid(options: {'grng': UuidUtil.cryptoRNG});
     DocumentReference data = await consult.add({
       'id': uuid.v1(),
@@ -250,7 +257,7 @@ class _NewConsultState extends State<NewConsult> {
           'notification': <String, dynamic>{
             'body':
                 'تم اضافة سؤال او استفسار جديد من قبل الطالب  ${studentProvider.getUser().name}',
-            'title': ':هوي'
+            'title': 'استفسار'
           },
           'priority': 'high',
           'data': <String, dynamic>{
@@ -258,6 +265,11 @@ class _NewConsultState extends State<NewConsult> {
             'id': '1',
             'status': 'done',
             'screen': 'consults',
+            "data": <String, dynamic>{
+"type":"consult" ,
+
+"consult_id" : fcm_data['id']
+            }
           },
           'to':
               '/topics/${studentProvider.getUser().department.dept_code}${studentProvider.getUser().level.id.toString()}'
@@ -267,7 +279,7 @@ class _NewConsultState extends State<NewConsult> {
 
     debugPrint(response.body);
 
-    future.dismiss();
+LoadingDialog.hide(context);
 
     Get.back();
   }

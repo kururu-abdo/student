@@ -14,6 +14,7 @@ import 'package:student_side/model/level.dart';
 import 'package:student_side/model/semester.dart';
 import 'package:student_side/model/student.dart';
 import 'package:student_side/ui/views/home/home_screen.dart';
+import 'package:student_side/ui/views/widgets/loader.dart';
 import 'package:student_side/util/backendless_setup.dart';
 import 'package:student_side/util/constants.dart';
 import 'package:student_side/util/firebase_init.dart';
@@ -380,7 +381,7 @@ class _State extends State<RegisterationView> {
   }
 
   addStudent() async {
-    var future = await showLoadingDialog();
+                               LoadingDialog.show(context);
     CollectionReference student =
         FirebaseFirestore.instance.collection('student');
 
@@ -395,7 +396,8 @@ class _State extends State<RegisterationView> {
 
         // 42
       }).then((value) {
-        future.dismiss();
+                                     LoadingDialog.hide(context);
+
         getStorage.write('islogged', true).then((value) => print(''));
         getStorage
             .write(

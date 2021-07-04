@@ -3,8 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:student_side/model/event.dart';
+import 'package:student_side/ui/views/open_image.dart';
+import 'package:student_side/util/ui/app_colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainEventDetails extends StatefulWidget {
   final Event data;
@@ -16,12 +21,64 @@ class MainEventDetails extends StatefulWidget {
 
 class _EventDetailsState extends State<MainEventDetails> {
   List<String> files = [];
+
+
+
+
+    bool _permissionReady;
+
   @override
   void initState() {
     super.initState();
-
+_permissionReady = false;
+    _prepareSaveDir();
     fill_array();
   }
+  String _localPath;
+  Future<void> _prepareSaveDir() async {
+    _localPath = (await _findLocalPath()) + Platform.pathSeparator + 'Download';
+
+    final savedDir = Directory(_localPath);
+    bool hasExisted = await savedDir.exists();
+    if (!hasExisted) {
+      savedDir.create();
+    }
+  }
+
+  Future<void> _retryRequestPermission() async {
+    final hasGranted = await _checkPermission();
+
+    if (hasGranted) {
+      await _prepareSaveDir();
+    }
+
+    setState(() {
+      _permissionReady = hasGranted;
+    });
+  }
+
+  _checkPermission() async {
+    final status = await Permission.storage.status;
+    bool granted;
+    if (status != PermissionStatus.granted) {
+      final result = await Permission.storage.request();
+      if (result == PermissionStatus.granted) {
+        granted = true;
+      } else {
+        granted = false;
+      }
+    } else {
+      granted = true;
+    }
+
+    return granted;
+  }
+
+  Future<String> _findLocalPath() async {
+    final directory = await getExternalStorageDirectory();
+    return directory.path;
+  }
+
 
   fill_array() {
     for (var i = 0; i < widget.data.Files.length; i++) {
@@ -99,26 +156,92 @@ class _EventDetailsState extends State<MainEventDetails> {
                               children: files.map((file) {
                                 print(file);
 
-                                return Container(
-                                  margin: EdgeInsets.all(5.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.lightBlue.withOpacity(0.5),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      IconButton(
-                                          icon: Icon(
-                                            FontAwesomeIcons.download,
+                                    if (file.endsWith("jpg") ||
+                                        file.endsWith("jpeg") ||
+                                        file.endsWith("png")) {
+                                      return Container(
+                                        margin: EdgeInsets.all(8.0),
+                                        width: 100,
+                                        height: 200,
+                                        child: Column(
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                Get.to(OpenImage(url: file));
+                                              },
+                                              child: Container(
+                                                width: double.infinity,
+                                                color: Colors.amber,
+                                                child: Center(
+                                                    child:
+                                                        Text("معاينة الملف")),
+                                              ),
+                                            ),
+                                            Expanded(
+                                                child: Image.network(
+                                              file,
+                                              fit: BoxFit.cover,
+                                            )),
+                                            InkWell(
+                                              onTap: () {
+                                                _requestDownload(file);
+                                              },
+                                              child: Container(
+                                                width: double.infinity,
+                                                color: AppColors.greenColor,
+                                                child: Center(
+                                                    child: Text("تحميل الملف" ,        style: TextStyle(
+                                                            color:
+                                                                Colors.white))),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    }
+
+                                    return Container(
+                                      margin: EdgeInsets.all(8.0),
+                                      width: 100,
+                                      height: 200,
+                                      child: Column(
+                                        children: [
+                                          InkWell(
+                                            onTap: () async {
+                                              if (await canLaunch(file)) {
+                                                await launch(file);
+                                              } else {
+                                                throw 'Unable to open url : $file';
+                                              }
+                                            },
+                                            child: Container(
+                                              width: double.infinity,
+                                              color: Colors.amber,
+                                              child: Center(
+                                                  child: Text("معاينة الملف")),
+                                            ),
                                           ),
-                                          onPressed: () {
-                                            _requestDownload(file);
-                                          }),
-                                      Text('ملف ',
-                                          style: TextStyle(color: Colors.white))
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
+                                          Expanded(
+                                              child: Text(getFileType(file))),
+                                          InkWell(
+
+                                          onTap: (){
+                                          
+                                                                                        _requestDownload(file);
+
+                                          },
+                                            child: Container(
+                                              width: double.infinity,
+                                              color: AppColors.greenColor,
+                                              child: Center(
+                                                  child: Text("تحميل الملف" ,  style: TextStyle(color: Colors.white), )),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                              ).toList(),
                             )
                           : Column(
                             children: [
@@ -149,4 +272,11 @@ class _EventDetailsState extends State<MainEventDetails> {
           appDocPath, // click on notification to open downloaded file (for Android)
     );
   }
+
+ String getFileType(String url) {
+    String fileType = url.split('.').last.toLowerCase();
+
+    return fileType;
+  }
+
 }

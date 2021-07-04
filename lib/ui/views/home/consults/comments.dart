@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_show_more/flutter_show_more.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -123,10 +124,30 @@ color: AppColors.primaryColor,
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Center(
-                                      child: Text(
-                                     data['comment_text'],
-                                        maxLines: 20,
-                                      ),
+                                      child:
+                                      
+                                      
+                                       ShowMoreText(
+          data['comment_text'] ?? '',
+
+  maxLength: 100,
+  style: TextStyle(fontSize: 12, color: Colors.black),
+  showMoreText: 'عرض اكثر',
+  showMoreStyle: TextStyle(
+  fontSize: 12,
+    fontWeight: FontWeight.bold,
+    color: AppColors.greenColor,
+  ),
+  shouldShowLessText: true,
+  showLessText: ' عرض اقل',
+)
+     
+                                      
+                                      
+                                    //    Text(
+                                    //  data['comment_text'],
+                                    //     maxLines: 20,
+                                    //   ),
                                     ),
                                   ),
                                
@@ -185,6 +206,12 @@ color: AppColors.primaryColor,
                                   'id': '1',
                                   'status': 'done',
                                   'screen': 'consults',
+                                  "data":  <String, dynamic>{
+
+                                    "type":"consult_comment",
+                                    "consult_id": consult.id
+
+                                  }  
                                 },
                                 'to': '/topics/consult${consult.id}'
                               },

@@ -83,3 +83,84 @@ if(formattedDate == formattedToday) {
     
     return time;
   }
+
+
+
+
+
+
+
+Widget _imageViewWidget(String fileUrl) {
+  return Material(
+    child: BackdropFilter(
+      filter: ui.ImageFilter.blur(
+        sigmaX: 1.5,
+        sigmaY: 1.5,
+      ),
+      child: GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: SafeArea(
+          child: Container(
+            color: Colors.transparent,
+            padding: EdgeInsets.fromLTRB(
+              30.0,
+              50.0,
+              30.0,
+              50.0,
+            ),
+            child: Column(
+              children: <Widget>[
+                Flexible(
+                  child: PhotoView(
+                    backgroundDecoration: BoxDecoration(
+                      color: Colors.transparent,
+                    ),
+                      imageProvider:CachedNetworkImageProvider(fileUrl),
+                    loadingBuilder:
+                        (BuildContext context, ImageChunkEvent event) =>
+                            showLoader(),
+                  ),
+                ),
+                Center(
+                  child: IconButton(
+                    icon: CircleAvatar(
+                      backgroundColor: Colors.orange,
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+
+
+
+
+
+
+//get file type
+ String fileURL = '${file.fileUrl}';
+  String fileType = fileURL.split('.').last.toLowerCase();
+
+
+
+
+
+  _launchURL(String url) async {
+  const url = url; // you can use your url
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Unable to open url : $url';
+  }
+}

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:student_side/model/subject.dart';
 import 'package:student_side/ui/views/event_details.dart';
 import 'package:student_side/ui/views/lecture_disscusion.dart';
+import 'package:student_side/util/ui/app_colors.dart';
 
 class SubjectDetails extends StatefulWidget {
   final ClassSubject subject;
@@ -44,7 +45,7 @@ class _SubjectDetailsState extends State<SubjectDetails>
                 centerTitle: true,
                 title: Text("${widget.subject.name}",
                     style: TextStyle(
-                      color: Colors.black,
+                      color:  Colors.black,
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold
                     ) //TextStyle
@@ -54,8 +55,8 @@ class _SubjectDetailsState extends State<SubjectDetails>
                   fit: BoxFit.cover,
                 ) //Images.network
                 ), //FlexibleSpaceBar
-            expandedHeight: 230,
-            backgroundColor: Colors.greenAccent[400],
+            expandedHeight: 200,
+        
           ),
           SliverFillRemaining(
               child: Scaffold(
@@ -92,20 +93,66 @@ class _SubjectDetailsState extends State<SubjectDetails>
 
 
                   }
- 
+return ListView(
+                      children: snapshot.data.docs
+                          .asMap()
+                          .map((
+                            i,
+                            DocumentSnapshot document,
+                          ) {
+                           
+                            return MapEntry(
+                                i,
+                                Container(
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (_) => LectureDisscusion(
+                                                  document.data())));
+                                    },
+                                    child:
+                                    
+                                     Card(
+                                        margin: EdgeInsets.only(bottom: 8.0),
+                                        elevation: 2.0,
+                                        // color: Colors.yellow,
+                                        child: new ListTile(
+                                          leading: Container(
+                                              height: 40,
+                                              width: 40,
+                                              child: Center(
+                                                child: Text((i + 1).toString(),
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.blueGrey,
+                                                  shape: BoxShape.circle)),
+                                          title: new Text(
+                                            document.get("name"),
+                                            style: TextStyle(
+                                                color: Color(0xFF0336FE)),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                
+                                ));
+                          })
+                          .values
+                          .toList());
                   return new ListView(
                     children:
                         snapshot.data.docs.map((DocumentSnapshot document) {
 var data  =  document.data()  as Map<String, dynamic>;
-return Container(
-  
-child: ListTile(
+return ListTile(
   leading:  Container(
     color: Color.fromARGB(255, 255, 239, 240),
     child: Center(child: Text("001"),),
   ),
-  title: new Text(data['name']),),
-);
+  title: new Text(data['name']),);
 
       
                     }).toList(),
@@ -134,18 +181,16 @@ child: ListTile(
                                   child: EventDeitals(
                                       snapshot.data.docs[index].data()))));
                         },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20.0)),
-                              color: Colors.brown[400],
-                              boxShadow: [
-                                BoxShadow(blurRadius: 2.0, color: Colors.black),
-                                BoxShadow(blurRadius: 2.0),
-                                BoxShadow(blurRadius: 2.0),
-                                BoxShadow(blurRadius: 2.0)
-                              ]),
+
+                        child: Card(
+                          elevation: 5.0,
+                          margin: EdgeInsets.all(10.0),
                           child: ListTile(
+                            trailing: Container(
+                              height: 40,
+                              width: 40,
+                              color: Colors.green,
+                              child: Center(child:Text((index+1).toString())),),
                             title: Text(snapshot.data.docs[index]['name']),
                           ),
                         ),

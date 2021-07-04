@@ -13,6 +13,7 @@ import 'package:student_side/model/semester.dart';
 import 'package:student_side/model/student.dart';
 import 'package:student_side/ui/views/edit_profile.dart';
 import 'package:student_side/ui/views/home/home_screen.dart';
+import 'package:student_side/ui/views/widgets/loader.dart';
 import 'package:student_side/util/constants.dart';
 import 'package:student_side/util/fcm_init.dart';
 import 'package:student_side/util/firebase_init.dart';
@@ -32,8 +33,8 @@ class _MyPrpfoleState extends State<MyPrpfole> {
   Semester semester;
   List<Semester> semesters = [];
 
-  fetch_semesters() async {
-    var future = await showLoadingDialog();
+  fetch_semesters(BuildContext context) async {
+                           LoadingDialog.show(context);
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -50,7 +51,8 @@ class _MyPrpfoleState extends State<MyPrpfole> {
       print(item.toJson());
     }
 
-    future.dismiss();
+                             LoadingDialog.hide(context);
+
   }
 
   @override
@@ -61,7 +63,7 @@ class _MyPrpfoleState extends State<MyPrpfole> {
 
     semester = widget.student.semester;
 
-    fetch_semesters();
+    fetch_semesters(context);
   }
 
   @override
@@ -575,7 +577,7 @@ class _EditProfileState extends State<EditProfile> {
   Semester semester;
     Level level;
  fetch_semesters() async {
-    var future = await showLoadingDialog();
+                           LoadingDialog.show(context);
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -589,13 +591,13 @@ class _EditProfileState extends State<EditProfile> {
     setState(() {
       semesters = I.map((e) => Semester.fromJson(e.data())).toList();
     });
+                           LoadingDialog.show(context);
 
-    future.dismiss();
   }
 
 
   fetch_levels() async {
-    var future = await showLoadingDialog();
+                           LoadingDialog.show(context);
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -626,7 +628,7 @@ class _EditProfileState extends State<EditProfile> {
 
 //   });
 
-    future.dismiss();
+                           LoadingDialog.show(context);
   }
 
   @override

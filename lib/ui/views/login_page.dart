@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:student_side/ui/views/home/home_screen.dart';
 
 import 'package:student_side/util/constants.dart';
-import 'package:student_side/util/ui/app_colors.dart';
 
 
 class Login extends StatelessWidget {
