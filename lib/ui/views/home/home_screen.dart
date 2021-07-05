@@ -131,11 +131,10 @@ setState(() {
 
     FCMConfig.subscripeToTopic(
         "${student.department.dept_code}${student.level.id}");
-    FCMConfig.subscripeToTopic("level${student.level.id.toString()}");
     FCMConfig.subscripeToTopic("${student.department.dept_code}");
 
     FCMConfig.subscripeToTopic("${student.id_number.toString()}");
-    FCMConfig.subscripeToTopic("general");
+  
   }
 
   List<Semester> semsters = [];
@@ -189,8 +188,7 @@ bool isToday(int index){
 }
 
 getDaysOfWeek() async {
-                                 LoadingDialog.show(context);
-
+                              
  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     var days = firestore.collection('days');
@@ -204,7 +202,6 @@ getDaysOfWeek() async {
       this.days = I.map((e) => Day.fromJson(e.data())).toList();
     });
 
-                             LoadingDialog.hide(context);
 
 }
 

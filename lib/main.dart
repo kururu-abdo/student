@@ -22,9 +22,13 @@ import 'package:student_side/model/consult.dart';
 import 'package:student_side/model/notification.dart';
 import 'package:student_side/model/subject.dart';
 import 'package:student_side/ui/views/chat_page.dart';
+import 'package:student_side/ui/views/events.dart';
 import 'package:student_side/ui/views/home/consults/comments.dart';
 import 'package:student_side/ui/views/home/consults/consults.dart';
 import 'package:student_side/ui/views/home/home_screen.dart';
+import 'package:student_side/ui/views/notification_pages/event_comments.dart';
+import 'package:student_side/ui/views/notification_pages/lecture_comments.dart';
+import 'package:student_side/ui/views/notification_pages/my_consult_comments.dart';
 import 'package:student_side/ui/views/subject_details.dart';
 import 'package:student_side/ui/views/welcome_screen.dart';
 import 'package:student_side/util/chat_page_args.dart';
@@ -32,6 +36,7 @@ import 'package:student_side/util/keys.dart';
 import 'package:student_side/util/local_datase.dart';
 import 'package:student_side/util/ui/app_colors.dart';
 import 'package:student_side/util/ui/notifcatin_page.dart';
+import 'package:student_side/util/ui/notifications_page.dart';
 
 Isolate isolate;
 //  AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -74,7 +79,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
             //   icon: 'launch_background',
             // ),
             // null
-            ));
+            ),   payload: json.encode(message.data)   );
   }
 
   // if (message.data['screen'] == 'consults') {
@@ -152,7 +157,9 @@ final NotificationAppLaunchDetails notificationAppLaunchDetails =
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {
     var data = json.decode(payload);
+   debugPrint(data);
 
+debugPrint(data["data"]["type"]);
     if (data['type'] == "message") {
       var me = User.fromJson(data['receiver']);
       var user = User.fromJson(data['sender']);
@@ -161,10 +168,31 @@ final NotificationAppLaunchDetails notificationAppLaunchDetails =
         user: user,
       ));
     } else {
-      if (data['type'] == "event") {
-        // Get.to(EventComments(data['id']));
-      }  
-      // Get.to(LectureComments(data['id']));
+     
+      if(data["type"]=="consult"){
+  Get.to(Consults());
+      }
+      if(data["type"]=="consult_comment"){
+Get.to(MyConsultComments() ,  arguments: data["consult_id"]);
+      }
+
+        if (data["type"] == "news") {
+        Get.to(Events());
+      }
+      if(data["type"]=="lecture" || data["type"]=="event"  ){
+      //  Get.to(SubjectDetails(subject));
+      }
+      if(data["type"]=="lecture-comment"){
+      Get.to(LectureComments(data['id']));
+
+      }
+
+ if(data["type"]=="event-comment"){
+      Get.to(EventComments(data['id']));
+
+      }
+
+
     }
 
     debugPrint('notification payload: $payload');
@@ -250,9 +278,10 @@ onBackground: Colors.black
       //   DefaultWidgetsLocalizations.delegate,
       //   DefaultMaterialLocalizations.delegate,
       // ],
-        initialRoute: "/",
-        onGenerateRoute: routes,
-
+      
+routes: {
+  NotificationPage.page_id:(context)=>NotificationsPage()
+},
         home: 
          LoadingProvider(
            key: RIKeys.riKey1,

@@ -9,9 +9,7 @@ import 'package:student_side/model/notification.dart';
 import 'package:student_side/util/local_datase.dart';
 
 class FCMConfig {
-  FCMConfig() {
-    fcmConfig();
-  }
+ 
 
   static fcmConfig() async {
     debugPrint('config notfication');
@@ -28,27 +26,25 @@ class FCMConfig {
             body: notification.body,
             object: json.encode(message.data),
             time: DateTime.now().millisecondsSinceEpoch));
-        debugPrint('/////////////////////////////');
-        debugPrint(result.toString());
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-                AndroidNotificationDetails(
-                    'channel', 'channelName', 'channelDescription'),
-                null
-                // android:
-                //  AndroidNotificationDetails(
-                //   channel.id,
-                //   channel.name,
-                //   channel.description,
-                //   // TODO add a proper drawable resource to android, for now using
-                //   //      one that already exists in example app.
-                //   icon: 'launch_background',
-                // ),
-                // null
-                ));
+      Get.defaultDialog(
+          title: 'اخطار جديد',
+          content: Text("هنالك اخطار جديد"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.toNamed('/notification');
+                },
+                child: Text('حسنا')) ,
+
+
+
+                 TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: Text('تجاهل'))
+          ],
+        );
       }
     });
 
@@ -84,10 +80,9 @@ class FCMConfig {
                 //   icon: 'launch_background',
                 // ),
                 // null
-                ));
+                ),  payload: json.encode(message.data)   );
       }
 
-      Get.toNamed('notification');
     });
 
 // RemoteMessage initialMessage =
@@ -119,10 +114,9 @@ class FCMConfig {
             NotificationDetails(
                 AndroidNotificationDetails(
                     'channel', 'channelName', 'channelDescription'),
-                null));
+                null)  ,    payload: json.encode(message.data)   );
       }
 
-      Get.toNamed('notification');
     });
   }
 

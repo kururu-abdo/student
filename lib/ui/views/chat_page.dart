@@ -49,13 +49,13 @@ class _MyHomePageState extends State<ChatPage> {
                   })
             ],
             centerTitle: true,
-            title: Text(widget.user.name),
+            title: Text(widget.user.name+ "-"+" "+widget.user.role),
           ),
           body: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('messages')
                   .where('chat_id',
-                      isEqualTo: widget.me.name + widget.user.name)
+                      isEqualTo: widget.me.id.toString() + widget.user.id.toString())
                   .orderBy('time', descending: false)
                   .snapshots(),
               builder: (context, snapshot) {
@@ -87,7 +87,7 @@ var data =  snapshot.data.docs[index]
                                 color: User.fromJson(data['receiver']) ==
                                         User.fromJson(widget.me.toJson())
                                     ? Colors.grey
-                                    : Colors.purple,
+                                    : Colors.green[300].withOpacity(0.5),
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(20))),
                             margin: EdgeInsets.all(10.0),
@@ -109,7 +109,8 @@ var data =  snapshot.data.docs[index]
                       onPressed: () async {
                         var uuid = Uuid(options: {'grng': UuidUtil.cryptoRNG});
                         await chats.add({
-                          'chat_id': widget.me.name + widget.user.name,
+                          'chat_id': widget.me.id.toString() +
+                              widget.user.id.toString(),
                           'id': uuid.v1(),
                           'message': _controller.text,
                           'time': Timestamp.now(),
@@ -140,7 +141,8 @@ var data =  snapshot.data.docs[index]
                                 'screen': 'chat',
                                 'data': <dynamic, dynamic>{
                                   'sender': widget.me.toJson(),
-                                  'receiver': widget.user.toJson()
+                                  'receiver': widget.user.toJson() ,
+                                  "type" :"message"
                                 }
                               },
                               'to':

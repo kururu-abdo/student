@@ -143,9 +143,14 @@ class _State extends State<MyCourses> {
                                                     snapshot.data.name);
                                               },
                                             ),
-                                            //
+                                         Divider()  ,
+
+                                     Text("0 محاضرة")     //
                                           ],
                                         )
+                                     
+                                     
+                                  
                                       ],
                                     );
                                   },

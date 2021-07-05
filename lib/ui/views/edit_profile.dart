@@ -53,7 +53,7 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     var studentProvider = Provider.of<UserProvider>(context);
     var serviceProvider = Provider.of<ServiceProvider>(context);
-
+String newName;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -79,6 +79,24 @@ class _EditProfileState extends State<EditProfile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+
+
+              TextFormField(
+  decoration: InputDecoration(
+    border:   OutlineInputBorder(),
+    labelText: 'الاسم'
+  ),
+
+  onChanged: (str){
+    setState(() {
+      newName =  str ;
+    });
+  },
+     ) ,
+
+SizedBox(height: 20.0,) ,
+
+
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),

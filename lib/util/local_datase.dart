@@ -59,12 +59,19 @@ int res = await db.update('Notification', {"isread":1},
 
    Future<List<LocalNotification>> getAllNotification() async {
     final db = await database;
-    var res = await db.query("Notification" , where: "isread=?" , whereArgs: [0]);
+    var res = await db.query("Notification"  ,  orderBy: "id");
     List<LocalNotification> list =
         res.isNotEmpty ? res.map((c) => LocalNotification.fromJson(c)).toList() : [];
     return list;
   }
-
+Future<int> delete(int id) async {
+    var dbClient = await database;
+    return await dbClient.delete(
+      'Notification',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 
 Future<int>  getNotificationsCount() async{
   final db = await database;

@@ -15,6 +15,7 @@ import 'package:student_side/ui/views/edit_profile.dart';
 import 'package:student_side/ui/views/home/home_screen.dart';
 import 'package:student_side/ui/views/widgets/loader.dart';
 import 'package:student_side/util/constants.dart';
+import 'package:student_side/util/fancy_toast.dart';
 import 'package:student_side/util/fcm_init.dart';
 import 'package:student_side/util/firebase_init.dart';
 import 'package:student_side/util/ui/app_colors.dart';
@@ -34,7 +35,7 @@ class _MyPrpfoleState extends State<MyPrpfole> {
   List<Semester> semesters = [];
 
   fetch_semesters(BuildContext context) async {
-                           LoadingDialog.show(context);
+    LoadingDialog.show(context);
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -51,8 +52,7 @@ class _MyPrpfoleState extends State<MyPrpfole> {
       print(item.toJson());
     }
 
-                             LoadingDialog.hide(context);
-
+    LoadingDialog.hide(context);
   }
 
   @override
@@ -103,6 +103,7 @@ class _MyPrpfoleState extends State<MyPrpfole> {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView(
+                physics: BouncingScrollPhysics(),
                 children: <Widget>[
                   Container(
                       decoration: BoxDecoration(
@@ -368,39 +369,35 @@ class _MyPrpfoleState extends State<MyPrpfole> {
   }
 }
 
-
-
-
-
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
+
 class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-        var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    var studentProvider = Provider.of<UserProvider>(context, listen: false);
 
     return Scaffold(
-        appBar: AppBar(title:  Text(studentProvider.getUser().name) ,  centerTitle:true ),
-        bottomNavigationBar: Container(
+      appBar: AppBar(
+          title: Text(studentProvider.getUser().name), centerTitle: true),
+      bottomNavigationBar: Container(
         padding: EdgeInsets.all(5),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             new FloatingActionButton(
                 elevation: 0.0,
-            
-               child: Icon(Icons.edit),
+                child: Icon(Icons.edit),
                 onPressed: () {
-
-Get.to(EditProfile());
-
+                  Get.to(EditProfile());
                 })
           ],
         ),
@@ -408,36 +405,35 @@ Get.to(EditProfile());
       body: _body(context),
     );
   }
+
   _body(BuildContext context) {
-            var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    var studentProvider = Provider.of<UserProvider>(context, listen: false);
 
     return ListView(physics: BouncingScrollPhysics(), children: <Widget>[
-        Container(
-            padding: EdgeInsets.all(15),
-            child: Column(children: <Widget>[_headerSignUp(), _formUI(context)]))
-      ]);
+      Container(
+          padding: EdgeInsets.all(15),
+          child: Column(children: <Widget>[_headerSignUp(), _formUI(context)]))
+    ]);
   }
+
   _headerSignUp() {
-                var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    var studentProvider = Provider.of<UserProvider>(context, listen: false);
 
     return Column(children: <Widget>[
-        Container(height: 80, child: Icon(Icons.person  , color: AppColors.secondaryColor,size: 90)),
-        SizedBox(height: 12.0),
-        Text(  studentProvider.getUser().name ,
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 20.0,
-                color: Colors.orange)),
-
-
-
-      ]
-      
-      
-      );
+      Container(
+          height: 80,
+          child: Icon(Icons.person, color: AppColors.secondaryColor, size: 90)),
+      SizedBox(height: 12.0),
+      Text(studentProvider.getUser().name,
+          style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 20.0,
+              color: Colors.orange)),
+    ]);
   }
+
   _formUI(BuildContext context) {
-       var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    var studentProvider = Provider.of<UserProvider>(context, listen: false);
     return new Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -456,9 +452,8 @@ Get.to(EditProfile());
     );
   }
 
- 
   _dept() {
-       var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    var studentProvider = Provider.of<UserProvider>(context, listen: false);
     return Row(children: <Widget>[
       _prefixIcon(Icons.person),
       Column(
@@ -475,8 +470,9 @@ Get.to(EditProfile());
       )
     ]);
   }
+
   _level() {
-       var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    var studentProvider = Provider.of<UserProvider>(context, listen: false);
     return Row(children: <Widget>[
       _prefixIcon(Icons.person),
       Column(
@@ -493,7 +489,6 @@ Get.to(EditProfile());
       )
     ]);
   }
-
 
   _semester() {
     var studentProvider = Provider.of<UserProvider>(context, listen: false);
@@ -513,6 +508,7 @@ Get.to(EditProfile());
       )
     ]);
   }
+
   _prefixIcon(IconData iconData) {
     return ConstrainedBox(
       constraints: const BoxConstraints(minWidth: 48.0, minHeight: 48.0),
@@ -533,16 +529,14 @@ Get.to(EditProfile());
           )),
     );
   }
+
   @override
   void dispose() {
     super.dispose();
   }
 
   _id_number() {
-
-
-
-         var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    var studentProvider = Provider.of<UserProvider>(context, listen: false);
     return Row(children: <Widget>[
       _prefixIcon(Icons.perm_identity),
       Column(
@@ -561,8 +555,6 @@ Get.to(EditProfile());
   }
 }
 
-
-
 class EditProfile extends StatefulWidget {
   EditProfile({Key key}) : super(key: key);
 
@@ -571,14 +563,11 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-
   List<Level> levels = [];
- List<Semester> semesters = [];
+  List<Semester> semesters = [];
   Semester semester;
-    Level level;
- fetch_semesters() async {
-                           LoadingDialog.show(context);
-
+  Level level;
+  fetch_semesters() async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     var sems = firestore.collection('semester');
@@ -591,14 +580,9 @@ class _EditProfileState extends State<EditProfile> {
     setState(() {
       semesters = I.map((e) => Semester.fromJson(e.data())).toList();
     });
-                           LoadingDialog.show(context);
-
   }
 
-
   fetch_levels() async {
-                           LoadingDialog.show(context);
-
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     var level = firestore.collection('level');
@@ -627,22 +611,17 @@ class _EditProfileState extends State<EditProfile> {
 // });
 
 //   });
-
-                           LoadingDialog.show(context);
   }
 
   @override
   void initState() {
     super.initState();
 
-   
     FirebaseInit.initFirebase();
     fetch_levels();
     fetch_semesters();
 //fetch_depts();
   }
-
-
 
   subscribe(Student student) {
     // var data = getStorage.read('student');
@@ -650,12 +629,14 @@ class _EditProfileState extends State<EditProfile> {
 
     FCMConfig.subscripeToTopic(
         "${student.department.dept_code}${student.level.id}");
-    FCMConfig.subscripeToTopic("level${student.level.id.toString()}");
+
     FCMConfig.subscripeToTopic("${student.department.dept_code}");
 
-    FCMConfig.subscripeToTopic("${student.id_number.toString()}");
+    FCMConfig.subscripeToTopic("student${student.id_number.toString()}");
     FCMConfig.subscripeToTopic("general");
   }
+
+  String newName;
 
   unSubscrib() {
     var data = getStorage.read('student');
@@ -669,459 +650,166 @@ class _EditProfileState extends State<EditProfile> {
     FCMConfig.subscripeToTopic("${student.id_number.toString()}");
     FCMConfig.subscripeToTopic("general");
   }
+
   @override
   Widget build(BuildContext context) {
-
-          var studentProvider = Provider.of<UserProvider>(context, listen: false);
-          var serviceProvider = Provider.of<ServiceProvider>(context, listen: false);
+    var studentProvider = Provider.of<UserProvider>(context, listen: false);
+    var serviceProvider = Provider.of<ServiceProvider>(context, listen: false);
 
     return Scaffold(
-    appBar: AppBar(actions: [IconButton(onPressed: (){
-      Get.to(HomeView());
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(actions: [
+        IconButton(
+            onPressed: () {
+              Get.to(HomeView());
+            },
+            icon: Icon(Icons.home))
+      ], title: Text('تعديل الملف الشخصي'), centerTitle: true),
+      body: SafeArea(
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.all(0.0),
+            //height: MediaQuery.of(context).size.height,
 
-    }, icon: Icon(Icons.home))],
-    
-    title: Text('تعديل الملف الشخصي'),
-    centerTitle:  true
-    ),
-body: SafeArea(
-  child:   Center(
-    child: Container(
-    padding: const EdgeInsets.all(0.0),
-     //height: MediaQuery.of(context).size.height,
-    
-      child:   Form(child: Column(
-    
-      
-    
-        children: [
-    
-      
-    
-      
-    
-      
-    
-      Container(
-    
-      
-    
-                  decoration: BoxDecoration(
-    
-      
-    
-                    borderRadius: BorderRadius.circular(10.0),
-    
-      
-    
-                  ),
-    
-      
-    
-                  child: Padding(
-    
-      
-    
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-    
-      
-    
-                      child: Row(
-    
-      
-    
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-    
-      
-    
-                          children: [
-    
-      
-    
-                            Text('المستوى'),
-    
-      
-    
-                            Container(),
-    
-      
-    
-                            new DropdownButton<Level>(
-    
-      
-    
-                              value: level,
-    
-      
-    
-                              items: levels.map((level) {
-    
-      
-    
-                                return DropdownMenuItem<Level>(
-    
-      
-    
-                                  value: level,
-    
-      
-    
-                                  child: Text(level.name),
-    
-      
-    
-                                );
-    
-      
-    
-                              }).toList(),
-    
-      
-    
-                              onChanged: (newValue) {
-    
-      
-    
-                                setState(() {
-    
-      
-    
-                                  level = newValue;
-    
-      
-    
-                                });
-    
-      
-    
-                              },
-    
-      
-    
-                            )
-    
-      
-    
-                          ])),
-    
-      
-    
-                ),
-    
-      
-    
-                SizedBox(
-    
-      
-    
-                  height: 5,
-    
-      
-    
-                ),
-    
-      
-    
-                Container(
-    
-      
-    
-                  decoration: BoxDecoration(
-    
-      
-    
-                    borderRadius: BorderRadius.circular(10.0),
-    
-      
-    
-                  ),
-    
-      
-    
-                  child: Padding(
-    
-      
-    
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-    
-      
-    
-                      child: Row(
-    
-      
-    
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-    
-      
-    
-                          children: [
-    
-      
-    
-                            Text('السمستر'),
-    
-      
-    
-                            Container(),
-    
-      
-    
-                            new DropdownButton<Semester>(
-    
-      
-    
-                              value: semester,
-    
-      
-    
-                              items: semesters.map((sem) {
-    
-      
-    
-                                return DropdownMenuItem<Semester>(
-    
-      
-    
-                                  value: sem,
-    
-      
-    
-                                  child: Text(sem.name),
-    
-      
-    
-                                );
-    
-      
-    
-                              }).toList(),
-    
-      
-    
-                              onChanged: (newValue) {
-    
-      
-    
-                                setState(() {
-    
-      
-    
-                                  semester = newValue;
-    
-      
-    
-                                });
-    
-      
-    
-                              },
-    
-      
-    
-                            )
-    
-      
-    
-                          ])),
-    
-      
-    
-                ),
-    
-      
-    
-      
-    
-      
-    
-      SizedBox(height: 50.0,) ,
-    
-      
-    
-          OutlinedButton.icon(
-    
-      
-    
-                  label: Text('حفظ البيانات'),
-    
-      
-    
-                 
-    
-      
-    
-                  icon: Icon(Icons.save),
-    
-      
-    
-                  onPressed: ()  async{
-    
-      
-    
-      //unsubscribe to old things
-    
-      
-    
-      unSubscrib();
-    
-      
-    
-      
-    
-      
-    
-      //update data
-    
-      
-    
-      var data = getStorage.read('student');
-    
-      
-    
-                    var student = Student.fromJson(json.decode(data));
-    
-      
-    
-      
-    
-      
-    
-      if (this.level !=null) {
-    
-      
-    
-      student.level = this.level;
-    
-      
-    
-       serviceProvider.updateStudent(student).then((value) {
-    
-      
-    
-                        getStorage.write('student', json.encode(student.toJson()));
-    
-      
-    
-                      });
-    
-      
-    
-      
-    
-      
-    
-                      subscribe(student);
-    
-      
-    
-      
-    
-      
-    
-      }
-    
-      
-    
-      if (this.semester != null) {
-    
-      
-    
-      student.semester =  this.semester;
-    
-      
-    
-      serviceProvider.updateStudent(student).then((value) {
-    
-      
-    
-                        getStorage.write('student', json.encode(student.toJson()));
-    
-      
-    
-                      });
-    
-      
-    
-      
-    
-      
-    
-                      subscribe(student);
-    
-      
-    
-      
-    
-      
-    
-      }
-    
-      
-    
-      
-    
-      
-    
-       
-    
-      
-    
-      
-    
-      
-    
-      //
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
+            child: Form(
+                child: Column(
+              children: [
+                TextFormField(
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(), labelText: 'الاسم'),
+                  onChanged: (str) {
+                    setState(() {
+                      newName = str;
+                    });
                   },
-    
-      
-    
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text('المستوى'),
+                            Container(),
+                            new DropdownButton<Level>(
+                              value: level,
+                              items: levels.map((level) {
+                                return DropdownMenuItem<Level>(
+                                  value: level,
+                                  child: Text(level.name),
+                                );
+                              }).toList(),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  level = newValue;
+                                });
+                              },
+                            )
+                          ])),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text('السمستر'),
+                            Container(),
+                            new DropdownButton<Semester>(
+                              value: semester,
+                              items: semesters.map((sem) {
+                                return DropdownMenuItem<Semester>(
+                                  value: sem,
+                                  child: Text(sem.name),
+                                );
+                              }).toList(),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  semester = newValue;
+                                });
+                              },
+                            )
+                          ])),
+                ),
+                SizedBox(
+                  height: 50.0,
+                ),
+                Spacer(),
+                OutlinedButton.icon(
+                  label: Text('حفظ البيانات'),
+                  icon: Icon(Icons.save),
+                  onPressed: () async {
+                    LoadingDialog.show(context);
+
+                    //unsubscribe to old things
+
+                    unSubscrib();
+
+                    //update data
+
+                    var data = getStorage.read('student');
+
+                    var student = Student.fromJson(json.decode(data));
+
+                    if (this.level != null) {
+                      student.level = this.level;
+
+                      serviceProvider.updateStudent(student).then((value) {
+                        getStorage.write(
+                            'student', json.encode(student.toJson()));
+                      });
+
+                      subscribe(student);
+                    }
+
+                    if (this.semester != null) {
+                      student.semester = this.semester;
+
+                      serviceProvider.updateStudent(student).then((value) {
+                        getStorage.write(
+                            'student', json.encode(student.toJson()));
+                      });
+
+                      subscribe(student);
+                    }
+
+                    if (this.newName.length > 0 || this.newName != "") {
+                      student.name = this.newName;
+
+                      serviceProvider.updateStudent(student).then((value) {
+                        getStorage.write(
+                            'student', json.encode(student.toJson()));
+
+                        setState(() {});
+                      });
+                    }
+
+                    //
+
+                    LoadingDialog.hide(context);
+                    AppToasts.showSuccessToast(
+                        context, "تم تحديث البيانات بنجاح");
+
+                    Get.back();
+                  },
                 )
-    
-      
-    
-        ],
-    
-      
-    
-      )),
-    
-    ),
-  ),
-),
-
-
-
+              ],
+            )),
+          ),
+        ),
+      ),
     );
   }
 }

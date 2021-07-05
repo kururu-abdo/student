@@ -123,6 +123,19 @@ return SubjectDetails(subject);
                             );
                           },
                         ),
+trailing:    FutureBuilder(
+  future: getSubjectLectureCount(subject.id),
+  builder: (BuildContext context, AsyncSnapshot snapshot) {
+   if (snapshot.hasData) {
+     return  Text(  snapshot.data.toString()+" "+"محاضرة" ,   style: TextStyle(color: Colors.amber),);
+   }
+
+   return Text('loading..');
+  },
+),
+
+
+
                         leading: Image.asset('assets/images/diary.png')),
                   );
 
@@ -182,6 +195,21 @@ return SubjectDetails(subject);
 //   ),
       ),
     );
+  }
+
+  Future<int>  getSubjectLectureCount(String subjectId) async{
+   QuerySnapshot data = await FirebaseFirestore.instance
+        .collection('lectures')
+        .where('subject_id', isEqualTo: subjectId)
+        .get();
+
+ if (data.docs.length>0) {
+   return data.docs.length;
+ }
+return 0;
+
+
+
   }
 
   Future<Teacher> getTeacher(String teacher_id) async {
