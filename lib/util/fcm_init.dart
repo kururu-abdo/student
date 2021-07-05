@@ -67,9 +67,9 @@ class FCMConfig {
             notification.title,
             notification.body,
             NotificationDetails(
-                AndroidNotificationDetails(
+              android:  AndroidNotificationDetails(
                     'channel', 'channelName', 'channelDescription'),
-                null
+                
                 // android:
                 //  AndroidNotificationDetails(
                 //   channel.id,
@@ -112,9 +112,9 @@ class FCMConfig {
             notification.title,
             notification.body,
             NotificationDetails(
-                AndroidNotificationDetails(
+              android:  AndroidNotificationDetails(
                     'channel', 'channelName', 'channelDescription'),
-                null)  ,    payload: json.encode(message.data)   );
+                )  ,    payload: json.encode(message.data)   );
       }
 
     });

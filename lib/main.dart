@@ -66,9 +66,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         notification.title,
         notification.body,
         NotificationDetails(
-            AndroidNotificationDetails(
+      android:      AndroidNotificationDetails(
                 'channel', 'channelName', 'channelDescription'),
-            null
+            
             // android:
             //  AndroidNotificationDetails(
             //   channel.id,
@@ -152,7 +152,7 @@ final NotificationAppLaunchDetails notificationAppLaunchDetails =
       AndroidInitializationSettings('app_icon');
 
   final InitializationSettings initializationSettings = InitializationSettings(
- initializationSettingsAndroid,  null
+ android:initializationSettingsAndroid,  
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {

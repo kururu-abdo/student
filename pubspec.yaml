@@ -65,7 +65,8 @@ dependencies:
   percent_indicator: ^3.0.1
   page_transition: "^2.0.2"
   flutter_signin_button: ^2.0.0
-  flutter_local_notifications:
+  flutter_local_notifications: ^6.0.0
+
   flutter_rating: ^0.0.2
   font_awesome_flutter: ^9.1.0
   animation_director: ^0.1.1
