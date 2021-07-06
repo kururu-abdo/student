@@ -19,7 +19,7 @@ class DBProvider {
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, "notifications.db");
-    return await openDatabase(path, version: 3, onOpen: (db) {},
+    return await openDatabase(path, version: 4, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE Notification ("
           "id INTEGER PRIMARY KEY  AUTOINCREMENT ,"

@@ -26,6 +26,7 @@ import 'package:student_side/ui/views/events.dart';
 import 'package:student_side/ui/views/home/consults/comments.dart';
 import 'package:student_side/ui/views/home/consults/consults.dart';
 import 'package:student_side/ui/views/home/home_screen.dart';
+import 'package:student_side/ui/views/home/subjects/subject_widget.dart';
 import 'package:student_side/ui/views/notification_pages/event_comments.dart';
 import 'package:student_side/ui/views/notification_pages/lecture_comments.dart';
 import 'package:student_side/ui/views/notification_pages/my_consult_comments.dart';
@@ -182,7 +183,7 @@ final NotificationAppLaunchDetails notificationAppLaunchDetails =
           Get.to(Events());
         }
         if (data["type"] == "lecture" || data["type"] == "event") {
-          //  Get.to(SubjectDetails(subject));
+          Get.to(Subjects());
         }
         if (data["type"] == "lecture_comment") {
           Get.to(LectureComments(data['id']));
