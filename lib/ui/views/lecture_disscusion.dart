@@ -318,9 +318,9 @@ class _LectureDisscusionState extends State<LectureDisscusion> {
                               'status': 'done',
                               'screen': 'consults',
                               'data': <String, dynamic>{
-"type":"event_comment" ,
+"type":"lecture_comment" ,
 
-"event_id" :widget.data['id']
+"id" :widget.data['id']
                               }
                             },
                             'to':

@@ -77,14 +77,22 @@ var data = document.data() as Map<String, dynamic>;
 if (snapshot.connectionState==ConnectionState.waiting) {
   return Center(child: CircularProgressIndicator(),);
 }
-
+if(!snapshot.hasData){
+     return ListTile(
+                      onTap: () {
+                        Get.to(Material(child: TeacherProfile(snapshot.data)));
+                      },
+                      title: Text("بدون اسم"),
+                      subtitle: Text( "بدون اسم"),
+                    );
+}
                       return        ListTile(
                     onTap: () {
                       Get.to(Material(
                           child: TeacherProfile( snapshot.data)));
                     },
                     title: Text(snapshot.data.name),
-                    subtitle: Text(data['name']),
+                    subtitle: Text(data['name']??""),
                   );
 
                     },

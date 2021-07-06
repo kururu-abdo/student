@@ -187,7 +187,7 @@ Image.asset('assets/images/file_not_found.png') ,
                           <String, dynamic>{
                             'notification': <String, dynamic>{
                               'body':
-                                  'تم االتعليق علي المحاضرة  من قبل الطالب  ${userProvider.getUser().name}',
+                                  'تم االتعليق علي الاعلان  من قبل الطالب  ${userProvider.getUser().name}',
                               'title': ':هوي'
                             },
                             'priority': 'high',
@@ -197,8 +197,8 @@ Image.asset('assets/images/file_not_found.png') ,
                               'status': 'done',
                               'screen': 'event',
                               'data': <String, dynamic>{
-                                "type": "lecture_comment",
-                                "lecture_id": widget.data['id']
+                                "type": "event_comment",
+                                "id": widget.data['id']
                               }
                             },
                             'to':

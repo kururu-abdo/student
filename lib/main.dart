@@ -173,7 +173,7 @@ debugPrint(data["type"]);
   Get.to(Consults());
       }
       if(data["type"]=="consult_comment"){
-Get.to(MyConsultComments() ,  arguments: data["consult_id"]);
+Get.to(MyConsultComments() ,  arguments: data["id"]);
       }
 
         if (data["type"] == "news") {
@@ -182,12 +182,12 @@ Get.to(MyConsultComments() ,  arguments: data["consult_id"]);
       if(data["type"]=="lecture" || data["type"]=="event"  ){
       //  Get.to(SubjectDetails(subject));
       }
-      if(data["type"]=="lecture-comment"){
+      if(data["type"]=="lecture_comment"){
       Get.to(LectureComments(data['id']));
 
       }
 
- if(data["type"]=="event-comment"){
+ if(data["type"]=="event_comment"){
       Get.to(EventComments(data['id']));
 
       }

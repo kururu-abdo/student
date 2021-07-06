@@ -209,7 +209,7 @@ color: AppColors.primaryColor,
                                   "data":  <String, dynamic>{
 
                                     "type":"consult_comment",
-                                    "consult_id": consult.id
+                                    "id": consult.id
 
                                   }  
                                 },
