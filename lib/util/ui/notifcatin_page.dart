@@ -14,7 +14,7 @@ import 'package:student_side/ui/views/rating_details.dart';
 import 'package:student_side/util/local_datase.dart';
 
 class NotificationPage extends StatefulWidget {
-  static const String page_id = 'notification';
+  static const String page_id = '/notification';
   final Map data;
 
   NotificationPage(this.data);
