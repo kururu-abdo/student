@@ -156,6 +156,7 @@ final NotificationAppLaunchDetails notificationAppLaunchDetails =
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {
+        debugPrint("onselect");
     var data = json.decode(payload);
    debugPrint(data);
 
@@ -218,7 +219,7 @@ Get.to(MyConsultComments() ,  arguments: data["id"]);
 Route routes(RouteSettings settings) {
   if (settings.name == "notification") {
     return MaterialPageRoute(
-      builder: (_) => NotificationPage(settings.arguments),
+      builder: (_) => NotificationPage(),
     );
   } else if (settings.name == '/') {
     return MaterialPageRoute(

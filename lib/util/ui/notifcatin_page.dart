@@ -15,9 +15,8 @@ import 'package:student_side/util/local_datase.dart';
 
 class NotificationPage extends StatefulWidget {
   static const String page_id = '/notification';
-  final Map data;
 
-  NotificationPage(this.data);
+  NotificationPage();
 
   @override
   _NotificationPageState createState() => _NotificationPageState();
@@ -49,14 +48,11 @@ class _NotificationPageState extends State<NotificationPage> {
                     },
                     child: InkWell(
                       onTap: () {
-                        debugPrint(item.object);
-                        var object = json.decode(item.object);
-                        debugPrint(object.toString());
-                        var screen = object['screen'];
-
-                        var data =  json.decode(object["data"]);
+                        var data = json.decode(item.object);
                         //chat
 if(data["type"]=="message"){
+                        debugPrint(data['receiver']);
+
   var me  =   User.fromJson(data["receiver"]);
   var user = User.fromJson(data["sender"]);
 Get.to(ChatPage(me:me ,  user:user));

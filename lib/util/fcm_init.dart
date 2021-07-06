@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:student_side/main.dart';
 import 'package:student_side/model/notification.dart';
 import 'package:student_side/util/local_datase.dart';
+import 'package:student_side/util/ui/notifcatin_page.dart';
 
 class FCMConfig {
  
@@ -32,7 +33,9 @@ class FCMConfig {
           actions: [
             TextButton(
                 onPressed: () {
-                  Get.toNamed('/notification');
+
+
+                  Get.to(()=>NotificationPage());
                 },
                 child: Text('حسنا')) ,
 

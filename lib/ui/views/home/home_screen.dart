@@ -263,7 +263,7 @@ String getDateOfTheDay(int day) {
                                 icon: Icon(Icons.notifications), onPressed: () {
     
     
-    Get.to(NotificationPage({})  );
+    Get.to(NotificationPage()  );
     
                                 }),
 
