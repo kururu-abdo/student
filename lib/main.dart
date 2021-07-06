@@ -59,7 +59,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     DBProvider.db.newNotification(LocalNotification(
         title: notification.title,
           body: notification.body,
-        object: json.encode(message.data),
+        object: json.encode(message.data["data"]),
         time: DateTime.now().millisecondsSinceEpoch));
     flutterLocalNotificationsPlugin.show(
         notification.hashCode,
@@ -79,7 +79,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
             //   icon: 'launch_background',
             // ),
             // null
-            ),   payload: json.encode(message.data)   );
+            ),   payload: json.encode(message.data["data"])   );
   }
 
   // if (message.data['screen'] == 'consults') {
@@ -159,7 +159,7 @@ final NotificationAppLaunchDetails notificationAppLaunchDetails =
     var data = json.decode(payload);
    debugPrint(data);
 
-debugPrint(data["data"]["type"]);
+debugPrint(data["type"]);
     if (data['type'] == "message") {
       var me = User.fromJson(data['receiver']);
       var user = User.fromJson(data['sender']);

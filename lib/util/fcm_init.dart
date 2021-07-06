@@ -58,7 +58,7 @@ class FCMConfig {
         var result = DBProvider.db.newNotification(LocalNotification(
             title: notification.title,
             body: notification.body,
-            object: json.encode(message.data),
+            object: json.encode(message.data["data"]),
             time: DateTime.now().millisecondsSinceEpoch));
         debugPrint('/////////////////////////////');
         debugPrint(result.toString());
@@ -80,7 +80,7 @@ class FCMConfig {
                 //   icon: 'launch_background',
                 // ),
                 // null
-                ),  payload: json.encode(message.data)   );
+                ),  payload: json.encode(message.data["data"])   );
       }
 
     });
@@ -103,7 +103,8 @@ class FCMConfig {
         var result = await DBProvider.db.newNotification(LocalNotification(
             title: notification.title,
             body: notification.body,
-            object: json.encode(message.data),
+                        object: json.encode(message.data["data"]),
+
             time: DateTime.now().millisecondsSinceEpoch));
         debugPrint('/////////////////////////////');
         debugPrint(result.runtimeType.toString());
@@ -114,7 +115,7 @@ class FCMConfig {
             NotificationDetails(
               android:  AndroidNotificationDetails(
                     'channel', 'channelName', 'channelDescription'),
-                )  ,    payload: json.encode(message.data)   );
+                )  ,    payload: json.encode(message.data["data"])   );
       }
 
     });
