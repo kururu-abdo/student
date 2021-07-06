@@ -97,31 +97,6 @@ class FCMConfig {
 //    Get.toNamed('notification');
 //     }
 
-    FirebaseMessaging.onBackgroundMessage((message) async {
-      RemoteNotification notification = message.notification;
-      AndroidNotification android = message.notification?.android;
-
-      if (notification != null && android != null) {
-        debugPrint('config notfication');
-        var result = await DBProvider.db.newNotification(LocalNotification(
-            title: notification.title,
-            body: notification.body,
-                        object: json.encode(message.data),
-
-            time: DateTime.now().millisecondsSinceEpoch));
-        debugPrint('/////////////////////////////');
-        debugPrint(result.runtimeType.toString());
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android:  AndroidNotificationDetails(
-                    'channel', 'channelName', 'channelDescription'),
-                )  ,    payload: json.encode(message.data)   );
-      }
-
-    });
   }
 
   static routes() {}
