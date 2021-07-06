@@ -174,9 +174,9 @@ final NotificationAppLaunchDetails notificationAppLaunchDetails =
           Get.to(Consults());
         }
         if (data["type"] == "consult_comment") {
-          Get.to(MyConsultComments(), arguments: data["id"]);
+          Get.to(MyConsultComments(), arguments: data["consult_id"]);
+        
         }
-
         if (data["type"] == "news") {
           debugPrint("inside news");
           Get.to(Events());

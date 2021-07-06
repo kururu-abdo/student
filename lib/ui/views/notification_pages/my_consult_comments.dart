@@ -234,10 +234,10 @@ child: Card(
                                   'id': '1',
                                   'status': 'done',
                                   'screen': 'consults',
-                                  "data": <String, dynamic>{
+                                 
                                     "type": "consult_comment",
                                     "consult_id": consultId
-                                  }
+                                  
                                 },
                                 'to': '/topics/consult${consultId}'
                               },
