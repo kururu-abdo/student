@@ -158,7 +158,7 @@ final NotificationAppLaunchDetails notificationAppLaunchDetails =
       onSelectNotification: (String payload) async {
         debugPrint(payload);
     var data = json.decode(payload);
-  debugPrint(data["type"]);
+  debugPrint((data["type"] == "message").toString());
         debugPrint('notification payload: $payload');
 
     if (data['type'] == "message") {

@@ -53,8 +53,8 @@ class _NotificationPageState extends State<NotificationPage> {
 if(data["type"]=="message"){
                         debugPrint(data['receiver']);
 
-  var me  =   User.fromJson(data["receiver"]);
-  var user = User.fromJson(data["sender"]);
+  var me  =   User.fromJson(json.decode(data["receiver"]));
+  var user = User.fromJson(json.decode(data["sender"]));
 Get.to(ChatPage(me:me ,  user:user));
 
 
