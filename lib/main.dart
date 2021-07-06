@@ -156,50 +156,45 @@ final NotificationAppLaunchDetails notificationAppLaunchDetails =
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {
-        debugPrint(payload);
-    var data = json.decode(payload);
-  debugPrint((data["type"] == "message").toString());
-        debugPrint('notification payload: $payload');
+   if(payload != null){
+          debugPrint(payload);
+      var data = json.decode(payload);
+      debugPrint((data["type"] == "message").toString());
+      debugPrint('notification payload: $payload');
 
-    if (data['type'] == "message") {
-      var me = User.fromJson(json.decode(data['receiver']));
-      var user = User.fromJson(json.decode(data['sender']));
-      Get.to(ChatPage(
-        me: me,
-        user: user,
-      ));
-    } 
-    else {
-     
-      if(data["type"]=="consult"){
-  Get.to(Consults());
-      }
-      if(data["type"]=="consult_comment"){
-Get.to(MyConsultComments() ,  arguments: data["id"]);
-      }
+      if (data['type'] == "message") {
+        var me = User.fromJson(json.decode(data['receiver']));
+        var user = User.fromJson(json.decode(data['sender']));
+        Get.to(ChatPage(
+          me: me,
+          user: user,
+        ));
+      } else {
+        if (data["type"] == "consult") {
+          Get.to(Consults());
+        }
+        if (data["type"] == "consult_comment") {
+          Get.to(MyConsultComments(), arguments: data["id"]);
+        }
 
         if (data["type"] == "news") {
-
           debugPrint("inside news");
-        Get.to(Events());
+          Get.to(Events());
+        }
+        if (data["type"] == "lecture" || data["type"] == "event") {
+          //  Get.to(SubjectDetails(subject));
+        }
+        if (data["type"] == "lecture_comment") {
+          Get.to(LectureComments(data['id']));
+        }
+
+        if (data["type"] == "event_comment") {
+          Get.to(EventComments(data['id']));
+        }
       }
-      if(data["type"]=="lecture" || data["type"]=="event"  ){
-      //  Get.to(SubjectDetails(subject));
-      }
-      if(data["type"]=="lecture_comment"){
-      Get.to(LectureComments(data['id']));
 
-      }
-
- if(data["type"]=="event_comment"){
-      Get.to(EventComments(data['id']));
-
-      }
-
-
-    }
-
-    debugPrint('notification payload: $payload');
+      debugPrint('notification payload: $payload');
+   }
   });
   runApp(
     
