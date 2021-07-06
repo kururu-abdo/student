@@ -178,6 +178,8 @@ Get.to(MyConsultComments() ,  arguments: data["id"]);
       }
 
         if (data["type"] == "news") {
+
+          debugPrint("inside news");
         Get.to(Events());
       }
       if(data["type"]=="lecture" || data["type"]=="event"  ){

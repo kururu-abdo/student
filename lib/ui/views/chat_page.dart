@@ -139,11 +139,11 @@ var data =  snapshot.data.docs[index]
                                 'id': '1',
                                 'status': 'done',
                                 'screen': 'chat',
-                                'data': <dynamic, dynamic>{
+                             
                                   'sender': widget.me.toJson(),
                                   'receiver': widget.user.toJson() ,
                                   "type" :"message"
-                                }
+                                
                               },
                               'to':
                                   '/topics/teacher${widget.user.id.toString()}'

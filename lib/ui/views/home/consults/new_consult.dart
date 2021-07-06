@@ -262,14 +262,14 @@ LoadingDialog.show(context);
           'priority': 'high',
           'data': <String, dynamic>{
             'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-            'id': '1',
+          
             'status': 'done',
             'screen': 'consults',
-            "data": <String, dynamic>{
+            
 "type":"consult" ,
 
 "consult_id" : fcm_data['id']
-            }
+         
           },
           'to':
               '/topics/${studentProvider.getUser().department.dept_code}${studentProvider.getUser().level.id.toString()}'

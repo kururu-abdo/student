@@ -203,15 +203,15 @@ color: AppColors.primaryColor,
                                 'priority': 'high',
                                 'data': <String, dynamic>{
                                   'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-                                  'id': '1',
+                                  // 'id': '1',
                                   'status': 'done',
                                   'screen': 'consults',
-                                  "data":  <String, dynamic>{
+                                 
 
                                     "type":"consult_comment",
                                     "id": consult.id
 
-                                  }  
+                                   
                                 },
                                 'to': '/topics/consult${consult.id}'
                               },
