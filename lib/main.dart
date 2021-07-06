@@ -59,7 +59,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     DBProvider.db.newNotification(LocalNotification(
         title: notification.title,
           body: notification.body,
-        object: json.encode(message.data["data"]),
+        object: json.encode(message.data),
         time: DateTime.now().millisecondsSinceEpoch));
     flutterLocalNotificationsPlugin.show(
         notification.hashCode,
@@ -79,7 +79,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
             //   icon: 'launch_background',
             // ),
             // null
-            ),   payload: json.encode(message.data["data"])   );
+            ),   payload: json.encode(message.data)   );
   }
 
   // if (message.data['screen'] == 'consults') {
@@ -156,19 +156,20 @@ final NotificationAppLaunchDetails notificationAppLaunchDetails =
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {
-        debugPrint("onselect");
+        debugPrint(payload);
     var data = json.decode(payload);
-   debugPrint(data);
+  debugPrint(data["type"]);
+        debugPrint('notification payload: $payload');
 
-debugPrint(data["type"]);
     if (data['type'] == "message") {
-      var me = User.fromJson(data['receiver']);
-      var user = User.fromJson(data['sender']);
+      var me = User.fromJson(json.decode(data['receiver']));
+      var user = User.fromJson(json.decode(data['sender']));
       Get.to(ChatPage(
         me: me,
         user: user,
       ));
-    } else {
+    } 
+    else {
      
       if(data["type"]=="consult"){
   Get.to(Consults());
